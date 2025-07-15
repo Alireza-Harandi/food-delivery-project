@@ -1,0 +1,35 @@
+﻿using System.Text.RegularExpressions;
+using foodDelivery.Application;
+using foodDelivery.Application.DTOs;
+using foodDelivery.Domain;
+
+namespace foodDelivery.Infrustructure.Services;
+
+public class CustomerService(DbManager dbManager, IAuthService authService) : ICustomerService
+{
+    public CustomerSignupResponse Signup(CustomerSignupRequest request)
+    {
+        if (dbManager.Users.Any(u => u.Username == request.Username) )
+            throw new Exception("Username already taken");
+        
+        var phoneRegex = new Regex(@"^(\+98|0)?9\d{9}$");
+        if (!phoneRegex.IsMatch(request.PhoneNumber))
+            throw new Exception("Invalid phone number");
+        
+        Customer customer = new Customer(
+            request.Username,
+            request.Password,
+            "Customer",
+            request.Name,
+            request.PhoneNumber
+            );
+        dbManager.Users.Add(customer);
+        dbManager.Customers.Add(customer);
+        dbManager.SaveChanges();
+        
+
+        return new CustomerSignupResponse(
+            authService.CreateToken(customer)
+            );
+    }
+}
