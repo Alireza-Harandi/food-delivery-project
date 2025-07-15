@@ -1,5 +1,6 @@
 ﻿using System.Text;
-using foodDelivery.Application;
+using foodDelivery.Application.Interface;
+using foodDelivery.Domain;
 using foodDelivery.Infrustructure;
 using foodDelivery.Infrustructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -47,6 +48,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddControllers();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 builder.Services.AddAuthentication(opt =>
 {
@@ -85,5 +87,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+DbInitializer.SeedAdminUser(app.Services);
 
 app.Run();

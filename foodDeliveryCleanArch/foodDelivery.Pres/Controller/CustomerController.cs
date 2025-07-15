@@ -1,5 +1,5 @@
-﻿using foodDelivery.Application;
-using foodDelivery.Application.DTOs;
+﻿using foodDelivery.Application.DTOs.Customer;
+using foodDelivery.Application.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace foodDelivery.Pres.Controller;

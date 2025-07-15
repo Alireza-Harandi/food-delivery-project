@@ -1,6 +1,6 @@
-﻿using foodDelivery.Application.DTOs;
+﻿using foodDelivery.Application.DTOs.Customer;
 
-namespace foodDelivery.Application;
+namespace foodDelivery.Application.Interface;
 
 public interface ICustomerService
 {
