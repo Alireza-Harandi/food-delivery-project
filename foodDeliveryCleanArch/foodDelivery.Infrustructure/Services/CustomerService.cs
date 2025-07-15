@@ -27,9 +27,19 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         dbManager.Customers.Add(customer);
         dbManager.SaveChanges();
         
-
         return new CustomerSignupResponse(
             authService.CreateToken(customer)
+            );
+    }
+
+    public CustomerLoginResponse Login(CustomerLoginRequest request)
+    {
+        User? user = dbManager.Customers.FirstOrDefault(c => c.Username == request.Username && c.Password == request.Password);
+        if (user == null) 
+            throw new Exception("Invalid username or password");
+        
+        return new CustomerLoginResponse(
+            authService.CreateToken(user)
             );
     }
 }
