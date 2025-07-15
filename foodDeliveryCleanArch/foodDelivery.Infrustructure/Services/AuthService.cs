@@ -1,15 +1,16 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using foodDelivery.Application;
+using foodDelivery.Application.Interface;
 using foodDelivery.Domain;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace foodDelivery.Infrustructure.Services;
 
-public class AuthService(IConfiguration configuration) : IAuthService
+public class AuthService(IConfiguration configuration, IHttpContextAccessor httpContext) : IAuthService
 {
     public string CreateToken(User user)
     {
@@ -36,5 +37,20 @@ public class AuthService(IConfiguration configuration) : IAuthService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public Token? GetClaims()
+    {
+        var userClaims = httpContext.HttpContext?.User;
+        if (userClaims == null || !userClaims.Identity?.IsAuthenticated == true)
+            return null;
+
+        var userIdClaim = userClaims.FindFirst(ClaimTypes.NameIdentifier);
+        var roleClaim = userClaims.FindFirst(ClaimTypes.Role);
+
+        if (userIdClaim == null || roleClaim == null)
+            return null;
+        
+        return new Token(Guid.Parse(userIdClaim.Value), roleClaim.Value);
     }
 }
