@@ -15,6 +15,8 @@ public class AdminService(DbManager dbManager, IAuthService authService) : IAdmi
             throw new UnauthorizedAccessException("Invalid role");
         if (request.Username == null || request.Password == null)
             throw new Exception("Username or password is required");
+        if (dbManager.Users.Any(u => u.Username == request.Username) )
+            throw new Exception("Username already taken");
         
         Admin admin = new Admin(
             request.Username,
@@ -26,7 +28,21 @@ public class AdminService(DbManager dbManager, IAuthService authService) : IAdmi
         dbManager.SaveChanges();
 
         return new AdminSignupResponse(
-            authService.CreateToken(admin)
+            admin.Username,
+            admin.Password
             );
+    }
+
+    public AdminLoginResponse Login(AdminLoginRequest request)
+    {
+        if (request.Username == null || request.Password == null)
+            throw new ArgumentException("Username and password are required.");
+        Admin? admin = dbManager.Admins.FirstOrDefault(c => c.Username == request.Username && c.Password == request.Password);
+        if (admin == null) 
+            throw new UnauthorizedAccessException("Invalid username or password.");
+        
+        return new AdminLoginResponse(
+            authService.CreateToken(admin)
+        );
     }
 }

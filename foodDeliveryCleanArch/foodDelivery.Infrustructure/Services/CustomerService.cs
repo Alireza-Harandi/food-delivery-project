@@ -37,13 +37,13 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
     public CustomerLoginResponse Login(CustomerLoginRequest request)
     {
         if (request.Username == null || request.Password == null)
-            throw new UnauthorizedAccessException("Username or password is required");
-        User? user = dbManager.Customers.FirstOrDefault(c => c.Username == request.Username && c.Password == request.Password);
-        if (user == null) 
-            throw new Exception("Invalid username or password");
+            throw new ArgumentException("Username and password are required");
+        Customer? customer = dbManager.Customers.FirstOrDefault(c => c.Username == request.Username && c.Password == request.Password);
+        if (customer == null) 
+            throw new UnauthorizedAccessException("Invalid username or password");
         
         return new CustomerLoginResponse(
-            authService.CreateToken(user)
+            authService.CreateToken(customer)
             );
     }
 }

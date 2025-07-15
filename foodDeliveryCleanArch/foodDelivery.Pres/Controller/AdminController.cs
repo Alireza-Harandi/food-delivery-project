@@ -27,4 +27,22 @@ public class AdminController(IAdminService adminService) : ControllerBase
             return BadRequest(new { error = e.Message });
         }
     }
+    
+    [HttpPost("login")]
+    public IActionResult Login([FromBody] AdminLoginRequest request)
+    {
+        try
+        {
+            var response = adminService.Login(request);
+            return Ok(response);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
+        }
+    }
 }
