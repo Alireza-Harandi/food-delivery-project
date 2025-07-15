@@ -1,6 +1,7 @@
 ﻿namespace foodDelivery.Application.DTOs.Admin;
 
-public class AdminSignupResponse(string token)
+public class AdminSignupResponse(string username, string password)
 {
-    public string Token { get; set; } = token;
+    public string Username { get; set; } = username;
+    public string Password { get; set; } = password;
 }

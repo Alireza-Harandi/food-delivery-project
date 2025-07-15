@@ -30,7 +30,11 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             var response = customerService.Login(request);
             return Ok(response);
         }
-        catch (Exception e)
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
+        catch (UnauthorizedAccessException e)
         {
             return Unauthorized(new { error = e.Message });
         }
