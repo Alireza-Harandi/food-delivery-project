@@ -1,4 +1,4 @@
-﻿namespace foodDelivery.Application.DTOs;
+﻿namespace foodDelivery.Application.DTOs.Customer;
 
 public class CustomerLoginResponse(string token)
 {

@@ -1,4 +1,4 @@
-﻿namespace foodDelivery.Application.DTOs;
+﻿namespace foodDelivery.Application.DTOs.Customer;
 
 public class CustomerSignupRequest(string username, string password, string name, string phoneNumber)
 {
