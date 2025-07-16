@@ -49,6 +49,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IVendorService, VendorService>();
 
 builder.Services.AddAuthentication(opt =>
 {

@@ -14,8 +14,7 @@ public static class DbInitializer
         {
             var admin = new Admin(
                 "Admin1",
-                "p1",
-                "Admin"
+                "p1"
                 );
 
             dbManager.Users.Add(admin);

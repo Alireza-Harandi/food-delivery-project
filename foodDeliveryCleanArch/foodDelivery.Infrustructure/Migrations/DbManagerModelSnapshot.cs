@@ -76,6 +76,28 @@ namespace foodDelivery.Infrustructure.Migrations
                 {
                     b.HasBaseType("foodDelivery.Domain.User");
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OwnerName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RestaurantName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.ToTable("Users", t =>
+                        {
+                            t.Property("PhoneNumber")
+                                .HasColumnName("Vendor_PhoneNumber");
+                        });
+
                     b.HasDiscriminator().HasValue("Vendor");
                 });
 #pragma warning restore 612, 618

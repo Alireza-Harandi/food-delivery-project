@@ -5,9 +5,11 @@ public class Customer : User
     public string Name { get; set; }    
     public string PhoneNumber { get; set; }
 
-    public Customer(string username, string password, string role, string name, string phoneNumber) : base(username, password, role)
+    public Customer(string username, string password, string name, string phoneNumber) : base(username, password, "Customer")
     {
         Name = name;
         PhoneNumber = phoneNumber;
     }
+
+    public Customer() { }
 }

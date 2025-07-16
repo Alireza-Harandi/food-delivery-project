@@ -9,8 +9,8 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
 {
     public CustomerSignupResponse Signup(CustomerSignupRequest request)
     {
-        if (request.Username == null || request.Password == null || request.Name == null)
-            throw new ApplicationException("Username or password or name is required");
+        if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
+            throw new ArgumentException("All fields are required");
         if (dbManager.Users.Any(u => u.Username == request.Username) )
             throw new Exception("Username already taken");
         
@@ -21,11 +21,9 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         Customer customer = new Customer(
             request.Username,
             request.Password,
-            "Customer",
             request.Name,
             request.PhoneNumber
             );
-        dbManager.Users.Add(customer);
         dbManager.Customers.Add(customer);
         dbManager.SaveChanges();
         
@@ -36,8 +34,8 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
 
     public CustomerLoginResponse Login(CustomerLoginRequest request)
     {
-        if (request.Username == null || request.Password == null)
-            throw new ArgumentException("Username and password are required");
+        if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
+            throw new ArgumentException("All fields are required");
         Customer? customer = dbManager.Customers.FirstOrDefault(c => c.Username == request.Username && c.Password == request.Password);
         if (customer == null) 
             throw new UnauthorizedAccessException("Invalid username or password");

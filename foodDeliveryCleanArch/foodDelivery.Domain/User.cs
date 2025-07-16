@@ -17,4 +17,6 @@ public abstract class User
         Password = password;
         Role = role;
     }
+
+    protected User() { }
 }
