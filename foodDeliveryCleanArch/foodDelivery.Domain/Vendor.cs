@@ -2,7 +2,18 @@
 
 public class Vendor : User
 {
-    public Vendor(string username, string password, string role) : base(username, password, role)
+    public string OwnerName { get; set; }
+    public string RestaurantName { get; set; }
+    public string PhoneNumber { get; set; }
+    public string Address { get; set; }
+
+    public Vendor(string username, string password, string ownerName, string restaurantName, string phoneNumber, string address) : base(username, password, "Vendor")
     {
+        OwnerName = ownerName;
+        RestaurantName = restaurantName;
+        PhoneNumber = phoneNumber;
+        Address = address;
     }
+
+    public Vendor() {}
 }
