@@ -5,4 +5,5 @@ namespace foodDelivery.Application.Interface;
 public interface IVendorService
 {
     VendorSignupResponse Signup(VendorSignupRequest request);
+    VendorLocationResponse SetLocation(VendorLocationRequest request);
 }

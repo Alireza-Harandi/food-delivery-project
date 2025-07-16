@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using foodDelivery.Application.DTOs.Customer;
 using foodDelivery.Application.DTOs.Vendor;
 using foodDelivery.Application.Interface;
 using foodDelivery.Domain;
@@ -24,14 +23,38 @@ public class VendorService(DbManager dbManager, IAuthService authService) : IVen
             request.Password,
             request.OwnerName,
             request.RestaurantName,
-            request.PhoneNumber,
-            request.Address
+            request.PhoneNumber
         );
         dbManager.Vendors.Add(vendor);
         dbManager.SaveChanges();
         
         return new VendorSignupResponse(
             authService.CreateToken(vendor)
+        );
+    }
+    
+    public VendorLocationResponse SetLocation(VendorLocationRequest request)
+    {
+        Token? token = authService.GetClaims();
+        if (token == null)
+            throw new UnauthorizedAccessException("Invalid token");
+        if (token.Role != "Vendor")
+            throw new UnauthorizedAccessException("Invalid role");
+        if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
+            throw new ArgumentException("All fields are required");
+
+        Vendor? vendor = dbManager.Vendors.FirstOrDefault(v => v.Id == token.Id);
+        if (vendor == null)
+            throw new UnauthorizedAccessException("Invalid Vendor");
+        
+        vendor.Location = new Location(request.Latitude, request.Longitude, request.Address);;
+        dbManager.SaveChanges();
+
+        return new VendorLocationResponse(
+            vendor.Id,
+            vendor.Location.Latitude,
+            vendor.Location.Longitude,
+            vendor.Location.Address
         );
     }
 }
