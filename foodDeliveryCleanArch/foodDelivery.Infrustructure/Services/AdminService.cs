@@ -30,17 +30,4 @@ public class AdminService(DbManager dbManager, IAuthService authService) : IAdmi
             admin.Password
             );
     }
-
-    public AdminLoginResponse Login(AdminLoginRequest request)
-    {
-        if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
-            throw new ArgumentException("All fields are required");
-        Admin? admin = dbManager.Admins.FirstOrDefault(c => c.Username == request.Username && c.Password == request.Password);
-        if (admin == null) 
-            throw new UnauthorizedAccessException("Invalid username or password.");
-        
-        return new AdminLoginResponse(
-            authService.CreateToken(admin)
-        );
-    }
 }

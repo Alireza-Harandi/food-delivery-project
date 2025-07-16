@@ -21,22 +21,4 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             return BadRequest(new { error = e.Message });
         }
     }
-
-    [HttpPost("login")]
-    public IActionResult Login([FromBody] CustomerLoginRequest request)
-    {
-        try
-        {
-            var response = customerService.Login(request);
-            return Ok(response);
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(new { error = e.Message });
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized(new { error = e.Message });
-        }
-    }
 }

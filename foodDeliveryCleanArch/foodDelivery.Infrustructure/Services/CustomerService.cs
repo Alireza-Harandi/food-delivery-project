@@ -31,17 +31,4 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
             authService.CreateToken(customer)
             );
     }
-
-    public CustomerLoginResponse Login(CustomerLoginRequest request)
-    {
-        if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
-            throw new ArgumentException("All fields are required");
-        Customer? customer = dbManager.Customers.FirstOrDefault(c => c.Username == request.Username && c.Password == request.Password);
-        if (customer == null) 
-            throw new UnauthorizedAccessException("Invalid username or password");
-        
-        return new CustomerLoginResponse(
-            authService.CreateToken(customer)
-            );
-    }
 }
