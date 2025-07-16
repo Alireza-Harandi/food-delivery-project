@@ -33,7 +33,7 @@ public class VendorService(DbManager dbManager, IAuthService authService) : IVen
         );
     }
     
-    public VendorLocationResponse SetLocation(VendorLocationRequest request)
+    public VendorSetLocationResponse SetLocation(VendorSetLocationRequest request)
     {
         Token? token = authService.GetClaims();
         if (token == null)
@@ -50,7 +50,7 @@ public class VendorService(DbManager dbManager, IAuthService authService) : IVen
         vendor.Location = new Location(request.Latitude, request.Longitude, request.Address);;
         dbManager.SaveChanges();
 
-        return new VendorLocationResponse(
+        return new VendorSetLocationResponse(
             vendor.Id,
             vendor.Location.Latitude,
             vendor.Location.Longitude,
