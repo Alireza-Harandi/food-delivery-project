@@ -1,4 +1,5 @@
 ﻿using foodDelivery.Application.DTOs.User;
+using foodDelivery.Application.DTOs.Vendor;
 using foodDelivery.Application.Interface;
 using foodDelivery.Domain;
 
