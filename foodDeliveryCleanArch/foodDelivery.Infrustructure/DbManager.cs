@@ -14,6 +14,7 @@ public class DbManager : DbContext
     public DbSet<Food> Foods { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Report> Reports { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -96,10 +97,22 @@ public class DbManager : DbContext
             .HasOne(i => i.Food)
             .WithMany(f => f.OrderItems)
             .HasForeignKey(i => i.FoodId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<Order>()
             .Property(o => o.Status)
             .HasConversion<string>();
+
+        modelBuilder.Entity<Report>()
+            .HasOne(r => r.Restaurant)
+            .WithMany()
+            .HasForeignKey(r => r.RestaurantId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Report>()
+            .HasOne(r => r.Customer)
+            .WithMany()
+            .HasForeignKey(r => r.CustomerId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
