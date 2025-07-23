@@ -67,4 +67,12 @@ public class AuthService(IConfiguration configuration, IHttpContextAccessor http
         return token;
     }
 
+    public Token CheckToken()
+    {
+        Token? token = GetClaims();
+        if (token == null)
+            throw new UnauthorizedAccessException("Invalid token");
+        return token;
+    }
+
 }

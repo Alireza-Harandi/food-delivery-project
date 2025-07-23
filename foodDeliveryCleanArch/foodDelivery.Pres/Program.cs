@@ -52,6 +52,7 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRestaurantService, RestaurantService>();
+builder.Services.AddScoped<IAuthUserService, AuthUserService>();
 
 builder.Services.AddAuthentication(opt =>
 {

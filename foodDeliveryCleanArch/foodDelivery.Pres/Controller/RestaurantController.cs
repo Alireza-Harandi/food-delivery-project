@@ -105,29 +105,6 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
         }
     }
     
-    [HttpGet("menu{menuId}-{restaurantId}")]
-    [Authorize]
-    public IActionResult GetMenu(Guid menuId, Guid restaurantId)
-    {
-        try
-        {
-            var response = restaurantService.GetMenu(restaurantId, menuId);
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { message = ex.Message });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
-    }
-    
     [HttpPatch("set/stock-{foodId}-{restaurantId}")]
     [Authorize]
     public IActionResult SetFoodStock(Guid restaurantId, Guid foodId, [FromBody] UpdateStockDto request)
@@ -190,25 +167,6 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
         catch (ArgumentException ex)
         {
             return BadRequest(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
-    }
-    
-    [HttpGet("menus-{restaurantId}")]
-    [Authorize]
-    public IActionResult GetMenus(Guid restaurantId)
-    {
-        try
-        {
-            var response = restaurantService.GetMenus(restaurantId);
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { message = ex.Message });
         }
         catch (Exception ex)
         {
