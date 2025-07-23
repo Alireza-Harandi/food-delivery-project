@@ -160,10 +160,11 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
     public FinalizeOrderResponse FinalizeOrder(FinalizeOrderRequest request)
     {
         Token token = CheckAccess();
-        Customer customer = dbManager.Customers.FirstOrDefault(c => c.UserId == token.UserId)!;
+        Customer customer = dbManager.Customers.First(c => c.UserId == token.UserId);
 
         Order? order = dbManager.Orders
             .Include(o => o.Customer)
+            .Include(o => o.Items)
             .FirstOrDefault(o => o.Id == request.OrderId);
 
         if (order == null)
@@ -171,14 +172,55 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         if (order.CustomerId != customer.Id)
             throw new UnauthorizedAccessException("Customer is not access");
 
+        if (!IsFoodsAvailable(order.Items))
+            throw new InvalidOperationException("Insufficient quantity for one or more food items in the order");
         order.Longitude = request.Longitude;
         order.Latitude = request.Latitude;
         order.Address = request.Address;
         order.Status = OrderStatus.Finalized;
+        order.CreatedAt = DateTime.UtcNow;
         dbManager.SaveChanges();
 
         return new FinalizeOrderResponse(
             order.Id
         );
+    }
+
+    private bool IsFoodsAvailable(List<OrderItem> items)
+    {
+        foreach (var item in items)
+        {
+            Food? food = dbManager.Foods.FirstOrDefault(f => f.Id == item.FoodId);
+            if (food == null || food.Stock < item.Quantity)
+            {
+                return false;
+            }
+        }
+
+        foreach (var item in items)
+        {
+            Food food = dbManager.Foods.First(f => f.Id == item.FoodId);
+            food.Stock -= item.Quantity;
+        }
+
+        dbManager.SaveChanges();
+        return true;
+    }
+
+    public void ReportRestaurant(ReportRestaurantDto request)
+    {
+        Token token = CheckAccess();
+        if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
+            throw new ArgumentException("All fields are required");
+        
+        Customer customer = dbManager.Customers.First(c => c.UserId == token.UserId);
+        Report report = new Report(
+            request.RestaurantId,
+            customer.Id,
+            request.Description
+        );
+        
+        dbManager.Reports.Add(report);
+        dbManager.SaveChanges();
     }
 }

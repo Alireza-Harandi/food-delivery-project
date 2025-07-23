@@ -116,6 +116,10 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         {
             return Unauthorized(new { error = e.Message });
         }
+        catch (InvalidOperationException e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
         catch (KeyNotFoundException e)
         {
             return NotFound(new { error = e.Message });
@@ -126,5 +130,27 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         }
     }
     
-    
+    [HttpPost("report")]
+    [Authorize]
+    public IActionResult ReportRestaurant(ReportRestaurantDto request)
+    {
+        try
+        {
+            customerService.ReportRestaurant(request);
+            return NoContent();
+
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
+        }
+    }
 }
