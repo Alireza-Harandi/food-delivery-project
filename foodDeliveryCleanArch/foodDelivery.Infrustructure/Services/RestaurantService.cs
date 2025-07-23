@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace foodDelivery.Infrustructure.Services;
 
-public class RestaurantService(DbManager dbManager, IAuthService authService)  : IRestaurantService
+public class RestaurantService(DbManager dbManager, IAuthService authService) : IRestaurantService
 {
     public Token CheckAccess(Guid restaurantId)
     {
@@ -25,7 +25,7 @@ public class RestaurantService(DbManager dbManager, IAuthService authService)  :
 
         Menu menu = new Menu(
             request.RestaurantId, request.Category, request.Name
-            );
+        );
         dbManager.Menus.Add(menu);
         dbManager.SaveChanges();
 
@@ -34,7 +34,7 @@ public class RestaurantService(DbManager dbManager, IAuthService authService)  :
             menu.Id,
             menu.Category,
             menu.Name
-            );
+        );
     }
 
     public AddFoodResponse AddFood(AddFoodRequest request)
@@ -51,11 +51,11 @@ public class RestaurantService(DbManager dbManager, IAuthService authService)  :
             request.Price,
             request.Stock,
             request.Description
-            );
-        
+        );
+
         dbManager.Foods.Add(food);
         dbManager.SaveChanges();
-        
+
         Menu? menu = dbManager.Menus.FirstOrDefault(m => m.Id == request.MenuId);
         if (menu == null)
             throw new KeyNotFoundException("Menu not found.");
@@ -68,7 +68,7 @@ public class RestaurantService(DbManager dbManager, IAuthService authService)  :
             food.Price,
             food.Description,
             food.Stock
-            );
+        );
     }
 
     public void DeleteMenu(Guid menuId, Guid restaurantId)
@@ -91,22 +91,6 @@ public class RestaurantService(DbManager dbManager, IAuthService authService)  :
         dbManager.SaveChanges();
     }
 
-    public MenuDetailsDto GetMenu(Guid restaurantId, Guid menuId)
-    {
-        CheckAccess(restaurantId);
-        Menu? menu = dbManager.Menus
-            .Include(m => m.Foods)
-            .FirstOrDefault(m => m.Id == menuId);
-        if(menu == null)
-            throw new KeyNotFoundException("Menu not found.");
-        return new MenuDetailsDto(
-            menu.Id,
-            menu.Name,
-            menu.Category,
-            menu.Foods.Select(f => new FoodItemDto(f.Id, f.Name, f.Stock, f.Price, f.Description)).ToList()
-            );
-    }
-
     public void SetFoodStock(Guid restaurantId, Guid foodId, UpdateStockDto request)
     {
         CheckAccess(restaurantId);
@@ -122,7 +106,7 @@ public class RestaurantService(DbManager dbManager, IAuthService authService)  :
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
         CheckAccess(request.RestaurantId);
-        
+
         Location location = new Location(request.Latitude, request.Longitude, request.Address, request.RestaurantId);
         dbManager.Locations.Add(location);
         dbManager.SaveChanges();
@@ -151,27 +135,6 @@ public class RestaurantService(DbManager dbManager, IAuthService authService)  :
         return new SetWhResponse(
             request.RestaurantId,
             request.WhList
-            );
-    }
-    
-    public MenusDto GetMenus(Guid restaurantId)
-    {
-        CheckAccess(restaurantId);
-        List<MenuDetailsDto> menus = dbManager.Menus
-            .Include(m => m.Foods)
-            .Where(m => m.RestaurantId == restaurantId)
-            .Select(m => new MenuDetailsDto(
-                m.Id,
-                m.Name,
-                m.Category,
-                m.Foods.Select(f => new FoodItemDto(
-                    f.Id,
-                    f.Name,
-                    f.Stock,
-                    f.Price,
-                    f.Description
-                )).ToList()
-            )).ToList();
-        return new MenusDto(menus);
+        );
     }
 }

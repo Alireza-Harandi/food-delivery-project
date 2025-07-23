@@ -35,22 +35,4 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
             authService.CreateToken(user)
             );
     }
-
-    public AutocompleteResponseDto AutocompleteRestaurants(string prefix)
-    {
-        CheckAccess();
-        if (string.IsNullOrWhiteSpace(prefix))
-            throw new AggregateException("Prefix is required.");
-
-        List<AutocompleteItemDto> restaurants = dbManager.Restaurants
-            .Where(r => r.Name.StartsWith(prefix))
-            .OrderBy(r => r.Rating)
-            .Select(r => new AutocompleteItemDto(
-                r.Id,
-                r.Name
-            ))
-            .Take(5)
-            .ToList();
-        return new AutocompleteResponseDto(restaurants);
-    }
 }
