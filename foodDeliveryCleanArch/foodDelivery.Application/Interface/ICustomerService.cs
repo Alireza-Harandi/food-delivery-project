@@ -8,4 +8,5 @@ public interface ICustomerService
     public AddToOrderResponse AddToOrder(AddToOrderRequest request);
     public void SetOrderQuantity(SetOrderQuantityDto request);
     public CustomerOrderDto GetOrders(Guid orderId);
+    public FinalizeOrderResponse FinalizeOrder(FinalizeOrderRequest request);
 }

@@ -141,7 +141,7 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
 
         if (order == null)
             throw new KeyNotFoundException("Order not found");
-        if (order!.CustomerId != customer.Id)
+        if (order.CustomerId != customer.Id)
             throw new UnauthorizedAccessException("Customer is not access");
 
         return new CustomerOrderDto(
@@ -154,6 +154,31 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
                 i.FoodId,
                 i.Quantity
             )).ToList()
+        );
+    }
+
+    public FinalizeOrderResponse FinalizeOrder(FinalizeOrderRequest request)
+    {
+        Token token = CheckAccess();
+        Customer customer = dbManager.Customers.FirstOrDefault(c => c.UserId == token.UserId)!;
+
+        Order? order = dbManager.Orders
+            .Include(o => o.Customer)
+            .FirstOrDefault(o => o.Id == request.OrderId);
+
+        if (order == null)
+            throw new KeyNotFoundException("Order not found");
+        if (order.CustomerId != customer.Id)
+            throw new UnauthorizedAccessException("Customer is not access");
+
+        order.Longitude = request.Longitude;
+        order.Latitude = request.Latitude;
+        order.Address = request.Address;
+        order.Status = OrderStatus.Finalized;
+        dbManager.SaveChanges();
+
+        return new FinalizeOrderResponse(
+            order.Id
         );
     }
 }
