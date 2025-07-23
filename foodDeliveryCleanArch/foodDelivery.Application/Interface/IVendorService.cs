@@ -7,5 +7,5 @@ public interface IVendorService
 {
     public VendorSignupResponse Signup(VendorSignupRequest request);
     public RegisterRestaurantResponse RegisterRestaurant(RegisterRestaurantRequest request);
-    public Token CheckAccess();
+    public VendorProfileDto GetProfile();
 }
