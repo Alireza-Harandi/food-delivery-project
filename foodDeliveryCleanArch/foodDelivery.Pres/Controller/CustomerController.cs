@@ -1,4 +1,5 @@
 ﻿using foodDelivery.Application.DTOs.Customer;
+using foodDelivery.Application.DTOs.Restaurant;
 using foodDelivery.Application.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,29 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         catch (ArgumentException e)
         {
             return BadRequest(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
+        }
+    }
+    
+    [HttpPost("add/to-order")]
+    [Authorize]
+    public IActionResult AddToOrder(AddToOrderRequest request)
+    {
+        try
+        {
+            var response = customerService.AddToOrder(request);
+            return Ok(response);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
         }
         catch (Exception e)
         {
