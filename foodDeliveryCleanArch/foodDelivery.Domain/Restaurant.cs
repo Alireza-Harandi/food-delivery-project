@@ -17,6 +17,7 @@ public class Restaurant
     public List<WorkingHour> WorkingHours { get; set; } = new();
     public List<Menu> Menus { get; set; } = new();
     public double Rating { get; set; }
+    public List<Order> Orders { get; set; } = new();
 
     public Restaurant(Guid vendorId, string name, string phone)
     {

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using foodDelivery.Infrustructure;
@@ -11,9 +12,11 @@ using foodDelivery.Infrustructure;
 namespace foodDelivery.Infrustructure.Migrations
 {
     [DbContext(typeof(DbManager))]
-    partial class DbManagerModelSnapshot : ModelSnapshot
+    [Migration("20250723173307_AddOrder")]
+    partial class AddOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,61 +129,6 @@ namespace foodDelivery.Infrustructure.Migrations
                     b.HasIndex("RestaurantId");
 
                     b.ToTable("Menus");
-                });
-
-            modelBuilder.Entity("foodDelivery.Domain.Order", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("RestaurantId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<double>("Total")
-                        .HasColumnType("double precision");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("RestaurantId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("foodDelivery.Domain.OrderItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("FoodId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FoodId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("foodDelivery.Domain.Restaurant", b =>
@@ -327,44 +275,6 @@ namespace foodDelivery.Infrustructure.Migrations
                     b.Navigation("Restaurant");
                 });
 
-            modelBuilder.Entity("foodDelivery.Domain.Order", b =>
-                {
-                    b.HasOne("foodDelivery.Domain.Customer", "Customer")
-                        .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("foodDelivery.Domain.Restaurant", "Restaurant")
-                        .WithMany("Orders")
-                        .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Restaurant");
-                });
-
-            modelBuilder.Entity("foodDelivery.Domain.OrderItem", b =>
-                {
-                    b.HasOne("foodDelivery.Domain.Food", "Food")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("FoodId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("foodDelivery.Domain.Order", "Order")
-                        .WithMany("Items")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Food");
-
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("foodDelivery.Domain.Restaurant", b =>
                 {
                     b.HasOne("foodDelivery.Domain.Vendor", "Vendor")
@@ -398,24 +308,9 @@ namespace foodDelivery.Infrustructure.Migrations
                     b.Navigation("Restaurant");
                 });
 
-            modelBuilder.Entity("foodDelivery.Domain.Customer", b =>
-                {
-                    b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("foodDelivery.Domain.Food", b =>
-                {
-                    b.Navigation("OrderItems");
-                });
-
             modelBuilder.Entity("foodDelivery.Domain.Menu", b =>
                 {
                     b.Navigation("Foods");
-                });
-
-            modelBuilder.Entity("foodDelivery.Domain.Order", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("foodDelivery.Domain.Restaurant", b =>
@@ -423,8 +318,6 @@ namespace foodDelivery.Infrustructure.Migrations
                     b.Navigation("Location");
 
                     b.Navigation("Menus");
-
-                    b.Navigation("Orders");
 
                     b.Navigation("WorkingHours");
                 });
