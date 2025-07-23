@@ -7,6 +7,13 @@ namespace foodDelivery.Infrustructure.Services;
 
 public class CustomerService(DbManager dbManager, IAuthService authService) : ICustomerService
 {
+    private Token CheckAccess()
+    {
+        Token token = authService.CheckToken(Role.Customer);
+        if (!dbManager.Customers.Any(c => c.UserId == token.UserId))
+            throw new UnauthorizedAccessException("customer not found");
+        return token;
+    }
     public CustomerSignupResponse Signup(CustomerSignupRequest request)
     {
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
@@ -27,5 +34,23 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         return new CustomerSignupResponse(
             authService.CreateToken(user)
             );
+    }
+
+    public AutocompleteResponseDto AutocompleteRestaurants(string prefix)
+    {
+        CheckAccess();
+        if (string.IsNullOrWhiteSpace(prefix))
+            throw new AggregateException("Prefix is required.");
+
+        List<AutocompleteItemDto> restaurants = dbManager.Restaurants
+            .Where(r => r.Name.StartsWith(prefix))
+            .OrderBy(r => r.Rating)
+            .Select(r => new AutocompleteItemDto(
+                r.Id,
+                r.Name
+            ))
+            .Take(5)
+            .ToList();
+        return new AutocompleteResponseDto(restaurants);
     }
 }
