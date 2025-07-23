@@ -32,7 +32,7 @@ public class VendorController(IVendorService vendorService) : ControllerBase
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
-    
+
     [HttpPost("register/restaurant")]
     [Authorize]
     public IActionResult RegisterRestaurant([FromBody] RegisterRestaurantRequest request)
@@ -53,6 +53,25 @@ public class VendorController(IVendorService vendorService) : ControllerBase
         catch (Exception e)
         {
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
+        }
+    }
+
+    [HttpGet("profile")]
+    [Authorize]
+    public IActionResult GetProfile()
+    {
+        try
+        {
+            var response = vendorService.GetProfile();
+            return Ok(response);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
 }
