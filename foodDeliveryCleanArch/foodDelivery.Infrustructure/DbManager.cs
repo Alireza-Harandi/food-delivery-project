@@ -12,6 +12,8 @@ public class DbManager : DbContext
     public DbSet<Location> Locations { get; set; }
     public DbSet<Menu> Menus { get; set; }
     public DbSet<Food> Foods { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -71,5 +73,33 @@ public class DbManager : DbContext
             .WithMany(m => m.Foods)
             .HasForeignKey(f => f.MenuId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Customer>()
+            .HasMany(c => c.Orders)
+            .WithOne(o => o.Customer)
+            .HasForeignKey(o => o.CustomerId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Restaurant>()
+            .HasMany(r => r.Orders)
+            .WithOne(o => o.Restaurant)
+            .HasForeignKey(o => o.RestaurantId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Order>()
+            .HasMany(o => o.Items)
+            .WithOne(i => i.Order)
+            .HasForeignKey(oi => oi.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<OrderItem>()
+            .HasOne(i => i.Food)
+            .WithMany(f => f.OrderItems)
+            .HasForeignKey(i => i.FoodId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<Order>()
+            .Property(o => o.Status)
+            .HasConversion<string>();
     }
 }
