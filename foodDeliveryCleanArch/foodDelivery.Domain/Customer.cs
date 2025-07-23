@@ -14,6 +14,8 @@ public class Customer
     [ForeignKey("UserId")]
     public User? User { get; set; }
 
+    public List<Order> Orders { get; set; } = new();
+
     public Customer(string name, string phoneNumber, Guid userId)
     {
         Id = Guid.NewGuid();
