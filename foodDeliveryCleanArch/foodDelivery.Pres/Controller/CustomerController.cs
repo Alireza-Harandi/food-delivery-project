@@ -1,5 +1,4 @@
 ﻿using foodDelivery.Application.DTOs.Customer;
-using foodDelivery.Application.DTOs.Restaurant;
 using foodDelivery.Application.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -101,4 +100,31 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
+    
+    
+    [HttpGet("finalize/order-{orderId}")]
+    [Authorize]
+    public IActionResult FinalizeOrder(FinalizeOrderRequest request)
+    {
+        try
+        {
+            FinalizeOrderResponse response = customerService.FinalizeOrder(request);
+            return Ok(response);
+            
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
+        }
+    }
+    
+    
 }
