@@ -1,17 +1,26 @@
-﻿namespace foodDelivery.Domain;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class Vendor : User
+namespace foodDelivery.Domain;
+
+public class Vendor
 {
-    public string OwnerName { get; set; }
-    public string RestaurantName { get; set; }
-    public string PhoneNumber { get; set; }
-    public Location Location { get; set; }
+    [Key]
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+    [ForeignKey("UserId")]
+    public User? User { get; set; }
+    
+    public string Name { get; set; }
+    public string Phone { get; set; }
+    public List<Restaurant> Restaurants { get; set; } = new();
 
-    public Vendor(string username, string password, string ownerName, string restaurantName, string phoneNumber) : base(username, password, "Vendor")
+    public Vendor(Guid userId, string name, string phone)
     {
-        OwnerName = ownerName;
-        RestaurantName = restaurantName;
-        PhoneNumber = phoneNumber;
+        Id = Guid.NewGuid();
+        UserId = userId;
+        Name = name;
+        Phone = phone;
     }
 
     public Vendor() {}

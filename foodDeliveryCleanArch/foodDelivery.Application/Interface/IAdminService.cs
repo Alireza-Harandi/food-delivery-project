@@ -4,5 +4,5 @@ namespace foodDelivery.Application.Interface;
 
 public interface IAdminService
 {
-    AdminSignupResponse Signup(AdminSignupRequest request);
+    public AdminSignupResponse Signup(AdminSignupRequest request);
 }

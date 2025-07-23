@@ -12,8 +12,8 @@ using foodDelivery.Infrustructure;
 namespace foodDelivery.Infrustructure.Migrations
 {
     [DbContext(typeof(DbManager))]
-    [Migration("20250716192115_AddVendorDetails")]
-    partial class AddVendorDetails
+    [Migration("20250717005017_AddWorkingHourVendorRelation3")]
+    partial class AddWorkingHourVendorRelation3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,6 +53,31 @@ namespace foodDelivery.Infrustructure.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("foodDelivery.Domain.WorkingHour", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Day")
+                        .HasColumnType("integer");
+
+                    b.Property<TimeOnly>("End")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<TimeOnly>("Start")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<Guid>("VendorId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VendorId");
+
+                    b.ToTable("WorkingHours");
+                });
+
             modelBuilder.Entity("foodDelivery.Domain.Admin", b =>
                 {
                     b.HasBaseType("foodDelivery.Domain.User");
@@ -79,10 +104,6 @@ namespace foodDelivery.Infrustructure.Migrations
                 {
                     b.HasBaseType("foodDelivery.Domain.User");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("OwnerName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -102,6 +123,51 @@ namespace foodDelivery.Infrustructure.Migrations
                         });
 
                     b.HasDiscriminator().HasValue("Vendor");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.WorkingHour", b =>
+                {
+                    b.HasOne("foodDelivery.Domain.Vendor", "Vendor")
+                        .WithMany("WorkingHours")
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vendor");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Vendor", b =>
+                {
+                    b.OwnsOne("foodDelivery.Domain.Location", "Location", b1 =>
+                        {
+                            b1.Property<Guid>("VendorId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Address")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<double>("Latitude")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double>("Longitude")
+                                .HasColumnType("double precision");
+
+                            b1.HasKey("VendorId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("VendorId");
+                        });
+
+                    b.Navigation("Location")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Vendor", b =>
+                {
+                    b.Navigation("WorkingHours");
                 });
 #pragma warning restore 612, 618
         }

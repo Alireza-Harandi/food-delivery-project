@@ -10,14 +10,11 @@ public static class DbInitializer
         using var scope = serviceProvider.CreateScope();
         var dbManager = scope.ServiceProvider.GetRequiredService<DbManager>();
         
-        if (!dbManager.Users.Any(u => u.Role == "Admin"))
+        if (!dbManager.Users.Any(u => u.Role == Role.Admin))
         {
-            var admin = new Admin(
-                "Admin1",
-                "p1"
+            dbManager.Users.Add(
+                new User("a1", "p1", Role.Admin)
                 );
-
-            dbManager.Users.Add(admin);
             dbManager.SaveChanges();
         }
     }

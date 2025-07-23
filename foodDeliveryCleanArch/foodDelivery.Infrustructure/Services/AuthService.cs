@@ -17,7 +17,7 @@ public class AuthService(IConfiguration configuration, IHttpContextAccessor http
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Role),
+            new Claim(ClaimTypes.Role, user.Role.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
@@ -39,7 +39,7 @@ public class AuthService(IConfiguration configuration, IHttpContextAccessor http
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public Token? GetClaims()
+    private Token? GetClaims()
     {
         var userClaims = httpContext.HttpContext?.User;
         if (userClaims == null || !userClaims.Identity?.IsAuthenticated == true)
@@ -50,7 +50,21 @@ public class AuthService(IConfiguration configuration, IHttpContextAccessor http
 
         if (userIdClaim == null || roleClaim == null)
             return null;
-        
-        return new Token(Guid.Parse(userIdClaim.Value), roleClaim.Value);
+
+        if (!Enum.TryParse<Role>(roleClaim.Value, out var roleEnum))
+            return null;
+
+        return new Token(Guid.Parse(userIdClaim.Value), roleEnum);
     }
+    
+    public Token CheckToken(Role role)
+    {
+        Token? token = GetClaims();
+        if (token == null)
+            throw new UnauthorizedAccessException("Invalid token");
+        if (token.Role != role)
+            throw new UnauthorizedAccessException("Invalid role");
+        return token;
+    }
+
 }

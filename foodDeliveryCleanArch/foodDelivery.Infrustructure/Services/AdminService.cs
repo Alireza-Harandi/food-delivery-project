@@ -6,28 +6,29 @@ namespace foodDelivery.Infrustructure.Services;
 
 public class AdminService(DbManager dbManager, IAuthService authService) : IAdminService
 {
+    private Token CheckAccess()
+    {
+        Token token = authService.CheckToken(Role.Admin);
+        if (!dbManager.Users.Any(u => u.Id == token.UserId && u.Role == Role.Admin))
+            throw new UnauthorizedAccessException("admin not found");
+        return token;
+    }
+    
     public AdminSignupResponse Signup(AdminSignupRequest request)
     {
-        Token? token = authService.GetClaims();
-        if (token == null)
-            throw new UnauthorizedAccessException("Invalid token");
-        if (token.Role != "Admin")
-            throw new UnauthorizedAccessException("Invalid role");
+        CheckAccess();
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
         if (dbManager.Users.Any(u => u.Username == request.Username) )
-            throw new Exception("Username already taken");
+            throw new ArgumentException("Username already taken");
         
-        Admin admin = new Admin(
-            request.Username,
-            request.Password
-            );
-        dbManager.Admins.Add(admin);
+        User user = new User(request.Username, request.Password, Role.Admin);
+        dbManager.Users.Add(user);
         dbManager.SaveChanges();
-
+        
         return new AdminSignupResponse(
-            admin.Username,
-            admin.Password
+            user.Username,
+            user.Password
             );
     }
 }

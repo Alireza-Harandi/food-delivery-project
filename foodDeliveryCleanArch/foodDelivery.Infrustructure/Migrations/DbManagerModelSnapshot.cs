@@ -22,6 +22,136 @@ namespace foodDelivery.Infrustructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("foodDelivery.Domain.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Food", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("MenuId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MenuId");
+
+                    b.ToTable("Foods");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Location", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId")
+                        .IsUnique();
+
+                    b.ToTable("Locations");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Menu", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("Menus");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Restaurant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("VendorId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VendorId");
+
+                    b.ToTable("Restaurants");
+                });
+
             modelBuilder.Entity("foodDelivery.Domain.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -34,8 +164,7 @@ namespace foodDelivery.Infrustructure.Migrations
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("character varying(8)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -44,86 +173,152 @@ namespace foodDelivery.Infrustructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasDiscriminator<string>("Role").HasValue("User");
-
-                    b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("foodDelivery.Domain.Admin", b =>
+            modelBuilder.Entity("foodDelivery.Domain.Vendor", b =>
                 {
-                    b.HasBaseType("foodDelivery.Domain.User");
-
-                    b.HasDiscriminator().HasValue("Admin");
-                });
-
-            modelBuilder.Entity("foodDelivery.Domain.Customer", b =>
-                {
-                    b.HasBaseType("foodDelivery.Domain.User");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PhoneNumber")
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasDiscriminator().HasValue("Customer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Vendors");
                 });
 
-            modelBuilder.Entity("foodDelivery.Domain.Vendor", b =>
+            modelBuilder.Entity("foodDelivery.Domain.WorkingHour", b =>
                 {
-                    b.HasBaseType("foodDelivery.Domain.User");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("OwnerName")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Day")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<TimeOnly>("End")
+                        .HasColumnType("time without time zone");
 
-                    b.Property<string>("RestaurantName")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uuid");
 
-                    b.ToTable("Users", t =>
-                        {
-                            t.Property("PhoneNumber")
-                                .HasColumnName("Vendor_PhoneNumber");
-                        });
+                    b.Property<TimeOnly>("Start")
+                        .HasColumnType("time without time zone");
 
-                    b.HasDiscriminator().HasValue("Vendor");
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("WorkingHours");
                 });
 
-            modelBuilder.Entity("foodDelivery.Domain.Vendor", b =>
+            modelBuilder.Entity("foodDelivery.Domain.Customer", b =>
                 {
-                    b.OwnsOne("foodDelivery.Domain.Location", "Location", b1 =>
-                        {
-                            b1.Property<Guid>("VendorId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Address")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<double>("Latitude")
-                                .HasColumnType("double precision");
-
-                            b1.Property<double>("Longitude")
-                                .HasColumnType("double precision");
-
-                            b1.HasKey("VendorId");
-
-                            b1.ToTable("Users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("VendorId");
-                        });
-
-                    b.Navigation("Location")
+                    b.HasOne("foodDelivery.Domain.User", "User")
+                        .WithOne()
+                        .HasForeignKey("foodDelivery.Domain.Customer", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Food", b =>
+                {
+                    b.HasOne("foodDelivery.Domain.Menu", "Menu")
+                        .WithMany("Foods")
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Menu");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Location", b =>
+                {
+                    b.HasOne("foodDelivery.Domain.Restaurant", "Restaurant")
+                        .WithOne("Location")
+                        .HasForeignKey("foodDelivery.Domain.Location", "RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Menu", b =>
+                {
+                    b.HasOne("foodDelivery.Domain.Restaurant", "Restaurant")
+                        .WithMany("Menus")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Restaurant", b =>
+                {
+                    b.HasOne("foodDelivery.Domain.Vendor", "Vendor")
+                        .WithMany("Restaurants")
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vendor");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Vendor", b =>
+                {
+                    b.HasOne("foodDelivery.Domain.User", "User")
+                        .WithOne()
+                        .HasForeignKey("foodDelivery.Domain.Vendor", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.WorkingHour", b =>
+                {
+                    b.HasOne("foodDelivery.Domain.Restaurant", "Restaurant")
+                        .WithMany("WorkingHours")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Menu", b =>
+                {
+                    b.Navigation("Foods");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Restaurant", b =>
+                {
+                    b.Navigation("Location");
+
+                    b.Navigation("Menus");
+
+                    b.Navigation("WorkingHours");
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Vendor", b =>
+                {
+                    b.Navigation("Restaurants");
                 });
 #pragma warning restore 612, 618
         }

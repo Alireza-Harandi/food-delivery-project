@@ -4,5 +4,5 @@ namespace foodDelivery.Application.Interface;
 
 public interface ICustomerService
 {
-    CustomerSignupResponse Signup(CustomerSignupRequest request);
+    public CustomerSignupResponse Signup(CustomerSignupRequest request);
 }

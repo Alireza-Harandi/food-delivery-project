@@ -24,5 +24,9 @@ public class UserController(IUserService userService) : ControllerBase
         {
             return Unauthorized(new { error = e.Message });
         }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
+        }
     }
 }
