@@ -9,4 +9,5 @@ public interface ICustomerService
     public void SetOrderQuantity(SetOrderQuantityDto request);
     public CustomerOrderDto GetOrders(Guid orderId);
     public FinalizeOrderResponse FinalizeOrder(FinalizeOrderRequest request);
+    public void ReportRestaurant(ReportRestaurantDto request);
 }
