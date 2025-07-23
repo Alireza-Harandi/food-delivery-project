@@ -1,4 +1,4 @@
-﻿using foodDelivery.Application.DTOs.Customer;
+﻿using foodDelivery.Application.DTOs.AuthUser;
 using foodDelivery.Application.DTOs.Restaurant;
 using foodDelivery.Application.Interface;
 using foodDelivery.Domain;
@@ -15,12 +15,12 @@ public class AuthUserService(DbManager dbManager, IAuthService authService) : IA
             throw new UnauthorizedAccessException("user not found");
         return token;
     }
-    
+
     public AutocompleteResponseDto AutocompleteRestaurants(string prefix)
     {
         CheckAccess();
         if (string.IsNullOrWhiteSpace(prefix))
-            throw new AggregateException("Prefix is required.");
+            throw new ArgumentException("Prefix is required.");
 
         List<AutocompleteItemDto> restaurants = dbManager.Restaurants
             .Where(r => r.Name.StartsWith(prefix))
@@ -33,7 +33,24 @@ public class AuthUserService(DbManager dbManager, IAuthService authService) : IA
             .ToList();
         return new AutocompleteResponseDto(restaurants);
     }
-    
+
+    public AutocompleteResponseDto AutocompleteFoods(Guid restaurantId, string prefix)
+    {
+        CheckAccess();
+        if (string.IsNullOrWhiteSpace(prefix))
+            throw new ArgumentException("Prefix is required.");
+
+        List<AutocompleteItemDto> foods = dbManager.Foods
+            .Where(f => f.Menu!.RestaurantId == restaurantId && f.Name.StartsWith(prefix))
+            .Select(f => new AutocompleteItemDto(
+                f.Id,
+                f.Name
+            ))
+            .Take(5)
+            .ToList();
+        return new AutocompleteResponseDto(foods);
+    }
+
     public MenuDetailsDto GetMenu(Guid menuId)
     {
         CheckAccess();
@@ -49,7 +66,7 @@ public class AuthUserService(DbManager dbManager, IAuthService authService) : IA
             menu.Foods.Select(f => new FoodItemDto(f.Id, f.Name, f.Stock, f.Price, f.Description)).ToList()
         );
     }
-    
+
     public MenusDto GetMenus(Guid restaurantId)
     {
         CheckAccess();

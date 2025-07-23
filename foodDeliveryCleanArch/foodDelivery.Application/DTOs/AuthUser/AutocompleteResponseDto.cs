@@ -1,4 +1,4 @@
-﻿namespace foodDelivery.Application.DTOs.Customer;
+﻿namespace foodDelivery.Application.DTOs.AuthUser;
 
 public class AutocompleteResponseDto(List<AutocompleteItemDto> items)
 {

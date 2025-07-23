@@ -8,7 +8,7 @@ namespace foodDelivery.Pres.Controller;
 [Route("authUserController")]
 public class AuthUserController(IAuthUserService authUserService) : ControllerBase
 {
-    [HttpGet("autocomplete/restaurant")]
+    [HttpGet("autocomplete/restaurants")]
     [Authorize]
     public IActionResult AutocompleteRestaurants(string prefix)
     {
@@ -70,6 +70,29 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
         catch (Exception ex)
         {
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
+        }
+    }
+    
+    [HttpGet("autocomplete/foods")]
+    [Authorize]
+    public IActionResult AutocompleteFoods(Guid restaurantId, string prefix)
+    {
+        try
+        {
+            var response = authUserService.AutocompleteFoods(restaurantId, prefix);
+            return Ok(response);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
 }
