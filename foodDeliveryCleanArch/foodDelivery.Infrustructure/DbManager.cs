@@ -22,6 +22,9 @@ public class DbManager : DbContext
             .HasValue<Customer>("Customer")
             .HasValue<Vendor>("Vendor")
             .HasValue<Admin>("Admin");
+        
+        modelBuilder.Entity<Vendor>()
+            .OwnsOne(v => v.Location); 
     }
     
 }
