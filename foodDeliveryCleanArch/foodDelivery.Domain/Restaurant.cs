@@ -16,6 +16,7 @@ public class Restaurant
     public Location? Location { get; set; }
     public List<WorkingHour> WorkingHours { get; set; } = new();
     public List<Menu> Menus { get; set; } = new();
+    public double Rating { get; set; }
 
     public Restaurant(Guid vendorId, string name, string phone)
     {
@@ -23,6 +24,7 @@ public class Restaurant
         VendorId = vendorId;
         Name = name;
         Phone = phone;
+        Rating = 0;
     }
 
     public Restaurant() {}
