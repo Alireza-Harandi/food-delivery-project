@@ -97,16 +97,16 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
         Customer customer = dbManager.Customers.FirstOrDefault(c => c.UserId == token.UserId)!;
-        
+
         OrderItem? orderItem = dbManager.OrderItems
             .Include(i => i.Order)
             .FirstOrDefault(i =>
                 i.Id == request.OrderItemId);
-        
+
         Order? order = dbManager.Orders
             .Include(o => o.Items)
             .FirstOrDefault(o => o.Id == request.OrderId);
-        
+
         if (order == null)
             throw new KeyNotFoundException("Order not found");
         if (orderItem == null)
@@ -121,7 +121,39 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
                 dbManager.Orders.Remove(order);
         }
         else
+        {
             orderItem.Quantity = request.Quantity;
+            order.Total = CalculateTotalPrice(order.Id);
+        }
+
         dbManager.SaveChanges();
+    }
+
+    public CustomerOrderDto GetOrders(Guid orderId)
+    {
+        Token token = CheckAccess();
+        Customer customer = dbManager.Customers.FirstOrDefault(c => c.UserId == token.UserId)!;
+
+        Order? order = dbManager.Orders
+            .Include(o => o.Items)
+            .Include(o => o.Customer)
+            .FirstOrDefault(o => o.Id == orderId);
+
+        if (order == null)
+            throw new KeyNotFoundException("Order not found");
+        if (order!.CustomerId != customer.Id)
+            throw new UnauthorizedAccessException("Customer is not access");
+
+        return new CustomerOrderDto(
+            order.Id,
+            order.RestaurantId,
+            order.Status,
+            order.Total,
+            order.Items.Select(i => new OrderItemDto(
+                i.Id,
+                i.FoodId,
+                i.Quantity
+            )).ToList()
+        );
     }
 }

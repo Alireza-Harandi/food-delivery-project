@@ -27,7 +27,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
-    
+
     [HttpPost("add/to-order")]
     [Authorize]
     public IActionResult AddToOrder(AddToOrderRequest request)
@@ -63,6 +63,30 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         catch (ArgumentException e)
         {
             return BadRequest(new { error = e.Message });
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
+        }
+    }
+
+    [HttpGet("orders-{orderId}")]
+    [Authorize]
+    public IActionResult GetOrders(Guid orderId)
+    {
+        try
+        {
+            CustomerOrderDto response = customerService.GetOrders(orderId);
+            return Ok(response);
+            
         }
         catch (UnauthorizedAccessException e)
         {
