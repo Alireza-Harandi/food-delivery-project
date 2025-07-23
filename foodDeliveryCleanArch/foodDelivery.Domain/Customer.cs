@@ -1,14 +1,25 @@
-﻿namespace foodDelivery.Domain;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class Customer : User
+namespace foodDelivery.Domain;
+
+public class Customer
 {
+    [Key]
+    public Guid Id { get; set; }
     public string Name { get; set; }    
     public string PhoneNumber { get; set; }
+    
+    public Guid UserId { get; set; }
+    [ForeignKey("UserId")]
+    public User? User { get; set; }
 
-    public Customer(string username, string password, string name, string phoneNumber) : base(username, password, "Customer")
+    public Customer(string name, string phoneNumber, Guid userId)
     {
+        Id = Guid.NewGuid();
         Name = name;
         PhoneNumber = phoneNumber;
+        UserId = userId;
     }
 
     public Customer() { }

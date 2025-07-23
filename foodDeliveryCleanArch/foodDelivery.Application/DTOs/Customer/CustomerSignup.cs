@@ -7,3 +7,8 @@ public class CustomerSignupRequest(string username, string password, string name
     public string Name { get; set; } = name;
     public string PhoneNumber { get; set; } = phoneNumber;
 }
+
+public class CustomerSignupResponse(string token)
+{
+    public string Token { get; set; } = token;
+}

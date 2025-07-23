@@ -5,3 +5,8 @@ public class UserLoginRequest(string username, string password)
     public string Username { get; set; } = username;
     public string Password { get; set; } = password;
 }
+
+public class UserLoginResponse(string token)
+{
+    public string Token { get; set; } = token;
+}

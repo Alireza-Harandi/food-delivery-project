@@ -12,23 +12,20 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
         if (dbManager.Users.Any(u => u.Username == request.Username) )
-            throw new Exception("Username already taken");
+            throw new ArgumentException("Username already taken");
         
         var phoneRegex = new Regex(@"^(\+98|0)?9\d{9}$");
         if (!phoneRegex.IsMatch(request.PhoneNumber))
-            throw new Exception("Invalid phone number");
+            throw new ArgumentException("Invalid phone number");
         
-        Customer customer = new Customer(
-            request.Username,
-            request.Password,
-            request.Name,
-            request.PhoneNumber
-            );
+        User user = new User(request.Username, request.Password, Role.Customer);
+        dbManager.Users.Add(user);
+        Customer customer = new Customer(request.Name, request.PhoneNumber, user.Id);
         dbManager.Customers.Add(customer);
         dbManager.SaveChanges();
         
         return new CustomerSignupResponse(
-            authService.CreateToken(customer)
+            authService.CreateToken(user)
             );
     }
 }

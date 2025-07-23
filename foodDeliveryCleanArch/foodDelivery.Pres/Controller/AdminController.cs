@@ -22,9 +22,13 @@ public class AdminController(IAdminService adminService) : ControllerBase
         {
             return Unauthorized(new { error = e.Message });
         }
-        catch (Exception e)
+        catch (ArgumentException e)
         {
             return BadRequest(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
 }

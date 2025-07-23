@@ -1,7 +1,7 @@
 ﻿namespace foodDelivery.Domain;
 
-public class Token(Guid Id, string role)
+public class Token(Guid userId, Role role)
 {
-    public Guid Id { get; set; } = Id;
-    public string Role { get; set; } = role;
+    public Guid UserId { get; set; } = userId;
+    public Role Role { get; set; } = role;
 }

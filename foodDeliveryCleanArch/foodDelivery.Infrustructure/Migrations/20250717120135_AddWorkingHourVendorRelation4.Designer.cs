@@ -12,8 +12,8 @@ using foodDelivery.Infrustructure;
 namespace foodDelivery.Infrustructure.Migrations
 {
     [DbContext(typeof(DbManager))]
-    [Migration("20250716221413_AddVendorLocation")]
-    partial class AddVendorLocation
+    [Migration("20250717120135_AddWorkingHourVendorRelation4")]
+    partial class AddWorkingHourVendorRelation4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,6 +51,31 @@ namespace foodDelivery.Infrustructure.Migrations
                     b.HasDiscriminator<string>("Role").HasValue("User");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.WorkingHour", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Day")
+                        .HasColumnType("integer");
+
+                    b.Property<TimeOnly>("End")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<TimeOnly>("Start")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<Guid>("VendorId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VendorId");
+
+                    b.ToTable("WorkingHours");
                 });
 
             modelBuilder.Entity("foodDelivery.Domain.Admin", b =>
@@ -100,6 +125,17 @@ namespace foodDelivery.Infrustructure.Migrations
                     b.HasDiscriminator().HasValue("Vendor");
                 });
 
+            modelBuilder.Entity("foodDelivery.Domain.WorkingHour", b =>
+                {
+                    b.HasOne("foodDelivery.Domain.Vendor", "Vendor")
+                        .WithMany("WorkingHours")
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vendor");
+                });
+
             modelBuilder.Entity("foodDelivery.Domain.Vendor", b =>
                 {
                     b.OwnsOne("foodDelivery.Domain.Location", "Location", b1 =>
@@ -127,6 +163,11 @@ namespace foodDelivery.Infrustructure.Migrations
 
                     b.Navigation("Location")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("foodDelivery.Domain.Vendor", b =>
+                {
+                    b.Navigation("WorkingHours");
                 });
 #pragma warning restore 612, 618
         }

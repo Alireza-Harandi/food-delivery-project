@@ -2,15 +2,15 @@
 
 namespace foodDelivery.Domain;
 
-public abstract class User
+public class User
 {
     [Key]
     public Guid Id { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
-    public string Role { get; set; }
+    public Role Role { get; set; }
 
-    protected User(string username, string password, string role)
+    public User(string username, string password, Role role)
     {
         Id = Guid.NewGuid();
         Username = username;
@@ -18,5 +18,5 @@ public abstract class User
         Role = role;
     }
 
-    protected User() { }
+    public User() { }
 }

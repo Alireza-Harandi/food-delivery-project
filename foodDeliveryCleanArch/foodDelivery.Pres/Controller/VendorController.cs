@@ -1,4 +1,5 @@
-﻿using foodDelivery.Application.DTOs.Vendor;
+﻿using foodDelivery.Application.DTOs.Restaurant;
+using foodDelivery.Application.DTOs.Vendor;
 using foodDelivery.Application.Interface;
 using foodDelivery.Infrustructure;
 using Microsoft.AspNetCore.Authorization;
@@ -18,34 +19,40 @@ public class VendorController(IVendorService vendorService) : ControllerBase
             var response = vendorService.Signup(request);
             return Ok(response);
         }
-        catch (Exception e)
+        catch (ArgumentException e)
         {
             return BadRequest(new { error = e.Message });
         }
-    }
-    
-    [HttpPatch("set/location")]
-    [Authorize]
-    public IActionResult SetLocation([FromBody] VendorSetLocationRequest request)
-    {
-        try
+        catch (UnauthorizedAccessException e)
         {
-            var response = vendorService.SetLocation(request);
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(ex.Message);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
+            return Unauthorized(new { error = e.Message });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "An unexpected error occurred");
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
-
     
+    [HttpPost("register/restaurant")]
+    [Authorize]
+    public IActionResult RegisterRestaurant([FromBody] RegisterRestaurantRequest request)
+    {
+        try
+        {
+            var response = vendorService.RegisterRestaurant(request);
+            return Ok(response);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
+        }
+    }
 }

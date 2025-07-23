@@ -16,9 +16,13 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             var response = customerService.Signup(request);
             return Ok(response);
         }
-        catch (Exception e)
+        catch (ArgumentException e)
         {
             return BadRequest(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
 }
