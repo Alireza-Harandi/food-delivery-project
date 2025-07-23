@@ -6,4 +6,5 @@ public interface ICustomerService
 {
     public CustomerSignupResponse Signup(CustomerSignupRequest request);
     public AddToOrderResponse AddToOrder(AddToOrderRequest request);
+    public void SetOrderQuantity(SetOrderQuantityDto request);
 }

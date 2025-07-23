@@ -50,4 +50,31 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
+
+    [HttpPatch("set/order-quantity")]
+    [Authorize]
+    public IActionResult SetOrderQuantity(SetOrderQuantityDto request)
+    {
+        try
+        {
+            customerService.SetOrderQuantity(request);
+            return NoContent();
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
+        }
+    }
 }
