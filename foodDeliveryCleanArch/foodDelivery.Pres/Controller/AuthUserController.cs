@@ -1,4 +1,5 @@
-﻿using foodDelivery.Application.Interface;
+﻿using foodDelivery.Application.DTOs.AuthUser;
+using foodDelivery.Application.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -95,4 +96,29 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
+    
+    [HttpGet("profile/restaurant-{restaurantId}")]
+    [Authorize]
+    public IActionResult GetRestaurantProfile(Guid restaurantId)
+    {
+        try
+        {
+            RestaurantProfileDto response = authUserService.GetRestaurantProfile(restaurantId);
+            return Ok(response);
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { error = e.Message });
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
+        }
+    }
+    
+    
 }
