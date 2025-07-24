@@ -19,4 +19,14 @@ public class UserService(DbManager dbManager, IAuthService authService) : IUserS
             authService.CreateToken(user)
         );
     }
+    
+    public void Logout()
+    {
+        string token = authService.IsRevoked();
+        dbManager.RevokedTokens.Add(new RevokedToken(
+            token,
+            DateTime.UtcNow.AddMinutes(10)
+        ));
+        dbManager.SaveChanges();
+    }
 }
