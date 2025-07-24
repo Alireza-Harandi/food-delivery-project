@@ -200,5 +200,24 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         }
     }
     
+    [HttpGet("profile")]
+    [Authorize]
+    public IActionResult GetProfile()
+    {
+        try
+        {
+            CustomerProfileDto response = customerService.GetProfile();
+            return Ok(response);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
+        }
+    }
+    
     
 }
