@@ -31,4 +31,25 @@ public class AdminController(IAdminService adminService) : ControllerBase
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
+    
+    [Authorize]
+    [HttpGet("reports")]
+    public IActionResult GetReports()
+    {
+        try
+        {
+            ReportsDto response = adminService.GetReports();
+            return Ok(response);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
+        }
+    }
+    
+    
 }
