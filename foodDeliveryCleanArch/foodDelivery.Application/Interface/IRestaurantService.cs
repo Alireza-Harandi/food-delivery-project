@@ -13,4 +13,5 @@ public interface IRestaurantService
     public void DeleteMenu(Guid menuId, Guid restaurantId);
     public void DeleteFood(Guid foodId, Guid restaurantId);
     public void SetFoodStock(Guid restaurantId, Guid foodId, UpdateStockDto request);
+    public RestaurantOrderDto GetFinalizedOrders(Guid restaurantId);
 }
