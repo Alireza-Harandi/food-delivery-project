@@ -9,4 +9,5 @@ public interface IAuthUserService
     public AutocompleteResponseDto AutocompleteFoods(Guid restaurantId, string prefix);
     public MenuDetailsDto GetMenu(Guid menuId);
     public MenusDto GetMenus(Guid restaurantId);
+    public RestaurantProfileDto GetRestaurantProfile(Guid restaurantId);
 }

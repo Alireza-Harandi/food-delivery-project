@@ -87,4 +87,30 @@ public class AuthUserService(DbManager dbManager, IAuthService authService) : IA
             )).ToList();
         return new MenusDto(menus);
     }
+
+    public RestaurantProfileDto GetRestaurantProfile(Guid restaurantId)
+    {
+        CheckAccess();
+        Restaurant? restaurant = dbManager.Restaurants
+            .Include(r => r.Location)
+            .Include(r => r.WorkingHours)
+            .FirstOrDefault(r => r.Id == restaurantId);
+        if (restaurant == null)
+            throw new KeyNotFoundException("Restaurant not found.");
+
+        return new RestaurantProfileDto(
+            restaurant.Id,
+            restaurant.Name,
+            restaurant.Phone,
+            restaurant.Location?.Latitude,
+            restaurant.Location?.Longitude,
+            restaurant.Location?.Address,
+            restaurant.Rating,
+            restaurant.WorkingHours.Select(w => new SetWh(
+                w.Day,
+                w.Start.ToString(),
+                w.End.ToString()
+            )).ToList()
+        );
+    }
 }
