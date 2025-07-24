@@ -10,4 +10,5 @@ public interface ICustomerService
     public CustomerOrderDto GetOrders(Guid orderId);
     public FinalizeOrderResponse FinalizeOrder(FinalizeOrderRequest request);
     public void ReportRestaurant(ReportRestaurantDto request);
+    public void DeleteOrder(Guid orderId);
 }

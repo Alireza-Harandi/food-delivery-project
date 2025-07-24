@@ -223,4 +223,21 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         dbManager.Reports.Add(report);
         dbManager.SaveChanges();
     }
+
+    public void DeleteOrder(Guid orderId)
+    {
+        Token token = CheckAccess();
+        Order? order = dbManager.Orders
+            .Include(o => o.Customer)
+            .Include(o => o.Items)
+            .Include(o => o.Restaurant)
+            .FirstOrDefault(o => o.Id == orderId);
+        if (order == null)
+            throw new KeyNotFoundException("Order not found");
+        if (order.CustomerId != token.UserId)
+            throw new UnauthorizedAccessException("Customer is not access");
+        
+        dbManager.Orders.Remove(order);
+        dbManager.SaveChanges();
+    }
 }
