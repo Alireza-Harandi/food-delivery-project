@@ -240,4 +240,24 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         dbManager.Orders.Remove(order);
         dbManager.SaveChanges();
     }
+
+    public void SubmitRating(SubmitRatingDto request)
+    {
+        Token token = CheckAccess();
+        Order? order = dbManager.Orders
+            .Include(o => o.Customer)
+            .Include(o => o.Restaurant)
+            .FirstOrDefault(o => o.Id == request.OrderId);
+        if (order == null)
+            throw new KeyNotFoundException("Order not found");
+        if (order.CustomerId != token.UserId)
+            throw new UnauthorizedAccessException("Customer is not access");
+        
+        order.Restaurant!.RatingSum += request.Score;
+        order.Restaurant.RatingCount++;
+        order.Restaurant.Rating = order.Restaurant.RatingSum / order.Restaurant.RatingCount;
+        
+        dbManager.Orders.Remove(order);
+        dbManager.SaveChanges();
+    }
 }

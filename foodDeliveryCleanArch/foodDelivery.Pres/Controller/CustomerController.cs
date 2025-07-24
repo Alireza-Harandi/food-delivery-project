@@ -177,5 +177,28 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         }
     }
     
+    [HttpPost("submit/rating")]
+    [Authorize]
+    public IActionResult SubmitRating(SubmitRatingDto request)
+    {
+        try
+        {
+            customerService.SubmitRating(request);
+            return NoContent();
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
+        }
+    }
+    
     
 }
