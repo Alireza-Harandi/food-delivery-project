@@ -212,14 +212,14 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         Token token = CheckAccess();
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
-        
+
         Customer customer = dbManager.Customers.First(c => c.UserId == token.UserId);
         Report report = new Report(
             request.RestaurantId,
             customer.Id,
             request.Description
         );
-        
+
         dbManager.Reports.Add(report);
         dbManager.SaveChanges();
     }
@@ -236,7 +236,7 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
             throw new KeyNotFoundException("Order not found");
         if (order.CustomerId != token.UserId)
             throw new UnauthorizedAccessException("Customer is not access");
-        
+
         dbManager.Orders.Remove(order);
         dbManager.SaveChanges();
     }
@@ -252,12 +252,24 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
             throw new KeyNotFoundException("Order not found");
         if (order.CustomerId != token.UserId)
             throw new UnauthorizedAccessException("Customer is not access");
-        
+
         order.Restaurant!.RatingSum += request.Score;
         order.Restaurant.RatingCount++;
         order.Restaurant.Rating = order.Restaurant.RatingSum / order.Restaurant.RatingCount;
-        
+
         dbManager.Orders.Remove(order);
         dbManager.SaveChanges();
+    }
+
+    public CustomerProfileDto GetProfile()
+    {
+        Token token = CheckAccess();
+        Customer customer = dbManager.Customers.First(c => c.UserId == token.UserId);
+        
+        return new CustomerProfileDto(
+            customer.Id,
+            customer.Name,
+            customer.PhoneNumber
+        );
     }
 }
