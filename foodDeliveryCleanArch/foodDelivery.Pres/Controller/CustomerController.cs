@@ -153,4 +153,29 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
+    
+    [HttpDelete("delete/order-{orderId}")]
+    [Authorize]
+    public IActionResult DeleteOrder(Guid orderId)
+    {
+        try
+        {
+            customerService.DeleteOrder(orderId);
+            return NoContent();
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Unauthorized(new { error = e.Message });
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { error = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
+        }
+    }
+    
+    
 }
