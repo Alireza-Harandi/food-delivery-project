@@ -173,4 +173,25 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
+    
+    [HttpGet("profile/restaurant/{restaurantId}")]
+    [Authorize]
+    public IActionResult GetFinalizedOrders(Guid restaurantId)
+    {
+        try
+        {
+            RestaurantOrderDto response = restaurantService.GetFinalizedOrders(restaurantId);
+            return Ok(response);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
+        }
+    }
+    
+    
 }
