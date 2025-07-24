@@ -1,4 +1,5 @@
-﻿using foodDelivery.Application.DTOs.Restaurant;
+﻿using foodDelivery.Application.DTOs.Customer;
+using foodDelivery.Application.DTOs.Restaurant;
 using foodDelivery.Application.Interface;
 using foodDelivery.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -136,5 +137,33 @@ public class RestaurantService(DbManager dbManager, IAuthService authService) : 
             request.RestaurantId,
             request.WhList
         );
+    }
+
+    public RestaurantOrderDto GetFinalizedOrders(Guid restaurantId)
+    {
+        CheckAccess(restaurantId);
+        Restaurant restaurant = dbManager.Restaurants
+            .Include(r => r.Orders)
+            .ThenInclude(o => o.Items)
+            .First(r => r.Id == restaurantId);
+        
+        List<OrderDetailDto> orderDetails = restaurant.Orders
+            .Where(o => o.Status == OrderStatus.Finalized)
+            .Select(o => new OrderDetailDto(
+                o.Id,
+                o.RestaurantId,
+                o.Status,
+                o.Total,
+                o.Latitude,
+                o.Longitude,
+                o.Address,
+                o.Items.Select(i => new OrderItemDto(
+                    i.Id,
+                    i.FoodId,
+                    i.Quantity
+                )).ToList()
+            )).ToList();
+        
+        return new RestaurantOrderDto(orderDetails);
     }
 }
