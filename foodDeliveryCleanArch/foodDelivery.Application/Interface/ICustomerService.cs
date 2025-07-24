@@ -12,4 +12,5 @@ public interface ICustomerService
     public void ReportRestaurant(ReportRestaurantDto request);
     public void DeleteOrder(Guid orderId);
     public void SubmitRating(SubmitRatingDto request);
+    public CustomerProfileDto GetProfile();
 }
