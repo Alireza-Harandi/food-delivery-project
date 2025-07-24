@@ -12,5 +12,3 @@ public class AddToOrderResponse(Guid orderId, Guid orderItemId)
     public Guid OrderId { get; set; } = orderId;
     public Guid OrderItemId { get; set; } = orderItemId;
 }
-
-

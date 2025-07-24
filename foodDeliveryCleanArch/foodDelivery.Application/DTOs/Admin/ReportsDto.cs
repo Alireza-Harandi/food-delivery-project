@@ -5,7 +5,14 @@ public class ReportsDto(List<ReportDetails> reports)
     List<ReportDetails> Reposts { get; set; } = reports;
 }
 
-public class ReportDetails(Guid reportId, Guid customerId, Guid restaurantId, string customerName, string restaurantName, DateTime date, string description)
+public class ReportDetails(
+    Guid reportId,
+    Guid customerId,
+    Guid restaurantId,
+    string customerName,
+    string restaurantName,
+    DateTime date,
+    string description)
 {
     public Guid ReportId { get; set; } = reportId;
     public Guid CustomerId { get; set; } = customerId;

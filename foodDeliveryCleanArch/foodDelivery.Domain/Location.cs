@@ -1,15 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 namespace foodDelivery.Domain;
 
 public class Location
 {
-    [Key]
-    public Guid Id { get; set; }
+    [Key] public Guid Id { get; set; }
     public Guid RestaurantId { get; set; }
-    [ForeignKey("RestaurantId")]
-    public Restaurant? Restaurant { get; set; }
-    
+    [ForeignKey("RestaurantId")] public Restaurant? Restaurant { get; set; }
+
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public string Address { get; set; }

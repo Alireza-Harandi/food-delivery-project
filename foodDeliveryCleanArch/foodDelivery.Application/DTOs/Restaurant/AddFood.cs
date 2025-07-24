@@ -10,7 +10,14 @@ public class AddFoodRequest(Guid restaurantId, Guid menuId, string name, double 
     public string Description { get; set; } = description;
 }
 
-public class AddFoodResponse(Guid restaurantId, Guid menuId, Guid foodId, string name, double price, string description, int stock)
+public class AddFoodResponse(
+    Guid restaurantId,
+    Guid menuId,
+    Guid foodId,
+    string name,
+    double price,
+    string description,
+    int stock)
 {
     public Guid RestaurantId { get; set; } = restaurantId;
     public Guid MenuId { get; set; } = menuId;

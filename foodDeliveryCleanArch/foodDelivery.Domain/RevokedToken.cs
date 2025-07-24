@@ -4,8 +4,7 @@ namespace foodDelivery.Domain;
 
 public class RevokedToken
 {
-    [Key]
-    public Guid Id { get; set; }
+    [Key] public Guid Id { get; set; }
     public string Token { get; set; }
     public DateTime ExpiryDate { get; set; }
 

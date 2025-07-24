@@ -7,7 +7,7 @@ public interface IRestaurantService
 {
     public SetLocationResponse SetLocation(SetLocationRequest request);
     public SetWhResponse SetWh(SetWhRequest request);
-    public Token CheckAccess(Guid restaurantId); 
+    public Token CheckAccess(Guid restaurantId);
     public AddMenuResponse AddMenu(AddMenuRequest request);
     public AddFoodResponse AddFood(AddFoodRequest request);
     public void DeleteMenu(Guid menuId, Guid restaurantId);

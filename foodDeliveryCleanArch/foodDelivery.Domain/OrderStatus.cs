@@ -3,5 +3,5 @@
 public enum OrderStatus
 {
     Reserved,
-    Finalized 
+    Finalized
 }

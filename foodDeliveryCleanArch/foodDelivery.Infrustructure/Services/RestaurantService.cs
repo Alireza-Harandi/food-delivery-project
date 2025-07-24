@@ -146,7 +146,7 @@ public class RestaurantService(DbManager dbManager, IAuthService authService) : 
             .Include(r => r.Orders)
             .ThenInclude(o => o.Items)
             .First(r => r.Id == restaurantId);
-        
+
         List<OrderDetailDto> orderDetails = restaurant.Orders
             .Where(o => o.Status == OrderStatus.Finalized)
             .Select(o => new OrderDetailDto(
@@ -163,7 +163,7 @@ public class RestaurantService(DbManager dbManager, IAuthService authService) : 
                     i.Quantity
                 )).ToList()
             )).ToList();
-        
+
         return new RestaurantOrderDto(orderDetails);
     }
 }

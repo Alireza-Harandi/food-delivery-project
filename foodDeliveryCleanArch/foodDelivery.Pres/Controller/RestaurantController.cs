@@ -31,7 +31,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
-    
+
     [HttpPost("add/food")]
     [Authorize]
     public IActionResult AddFood([FromBody] AddFoodRequest request)
@@ -81,7 +81,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
-    
+
     [HttpDelete("remove/food{foodId}-{restaurantId}")]
     [Authorize]
     public IActionResult DeleteFood(Guid foodId, Guid restaurantId)
@@ -104,7 +104,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
-    
+
     [HttpPatch("set/stock-{foodId}-{restaurantId}")]
     [Authorize]
     public IActionResult SetFoodStock(Guid restaurantId, Guid foodId, [FromBody] UpdateStockDto request)
@@ -127,7 +127,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
-    
+
     [HttpPut("set/location")]
     [Authorize]
     public IActionResult SetLocation([FromBody] SetLocationRequest request)
@@ -150,7 +150,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
-    
+
     [HttpPut("set/working-hours")]
     [Authorize]
     public IActionResult SetWorkingHours([FromBody] SetWhRequest request)
@@ -173,7 +173,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
-    
+
     [HttpGet("profile/restaurant/{restaurantId}")]
     [Authorize]
     public IActionResult GetFinalizedOrders(Guid restaurantId)
@@ -192,6 +192,4 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
-    
-    
 }

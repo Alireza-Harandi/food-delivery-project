@@ -8,5 +8,4 @@ public interface IAuthService
     public Token CheckToken(Role role);
     public Token CheckToken();
     public string IsRevoked();
-
 }

@@ -29,7 +29,7 @@ public class UserController(IUserService userService) : ControllerBase
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
-    
+
     [HttpPost("logout")]
     public IActionResult Logout()
     {

@@ -8,7 +8,15 @@ public class RestaurantOrderDto(List<OrderDetailDto> orderDetails)
     public List<OrderDetailDto> OrderDetails = orderDetails;
 }
 
-public class OrderDetailDto(Guid orderId, Guid restaurantId, OrderStatus orderStatus, double totalPrice, double latitude, double longitude, string address, List<OrderItemDto> orderItems)
+public class OrderDetailDto(
+    Guid orderId,
+    Guid restaurantId,
+    OrderStatus orderStatus,
+    double totalPrice,
+    double latitude,
+    double longitude,
+    string address,
+    List<OrderItemDto> orderItems)
 {
     public Guid OrderId { get; set; } = orderId;
     public Guid RestaurantId { get; set; } = restaurantId;
