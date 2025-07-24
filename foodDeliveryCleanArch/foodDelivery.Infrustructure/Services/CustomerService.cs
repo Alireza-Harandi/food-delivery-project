@@ -256,6 +256,8 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         order.Restaurant!.RatingSum += request.Score;
         order.Restaurant.RatingCount++;
         order.Restaurant.Rating = order.Restaurant.RatingSum / order.Restaurant.RatingCount;
+        
+        dbManager.Orders.Remove(order);
         dbManager.SaveChanges();
     }
 }
