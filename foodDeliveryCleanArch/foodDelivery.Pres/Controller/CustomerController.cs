@@ -85,7 +85,6 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         {
             CustomerOrderDto response = customerService.GetOrders(orderId);
             return Ok(response);
-            
         }
         catch (UnauthorizedAccessException e)
         {
@@ -100,8 +99,8 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
-    
-    
+
+
     [HttpGet("finalize/order-{orderId}")]
     [Authorize]
     public IActionResult FinalizeOrder(FinalizeOrderRequest request)
@@ -110,7 +109,6 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         {
             FinalizeOrderResponse response = customerService.FinalizeOrder(request);
             return Ok(response);
-            
         }
         catch (UnauthorizedAccessException e)
         {
@@ -129,7 +127,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
-    
+
     [HttpPost("report")]
     [Authorize]
     public IActionResult ReportRestaurant(ReportRestaurantDto request)
@@ -138,7 +136,6 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
         {
             customerService.ReportRestaurant(request);
             return NoContent();
-
         }
         catch (UnauthorizedAccessException e)
         {
@@ -153,7 +150,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
-    
+
     [HttpDelete("delete/order-{orderId}")]
     [Authorize]
     public IActionResult DeleteOrder(Guid orderId)
@@ -176,7 +173,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
-    
+
     [HttpPost("submit/rating")]
     [Authorize]
     public IActionResult SubmitRating(SubmitRatingDto request)
@@ -199,7 +196,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
-    
+
     [HttpGet("profile")]
     [Authorize]
     public IActionResult GetProfile()
@@ -218,6 +215,4 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
-    
-    
 }

@@ -2,7 +2,15 @@
 
 namespace foodDelivery.Application.DTOs.AuthUser;
 
-public class RestaurantProfileDto(Guid restaurantId, string name, string phone, double? latitude, double? longitude, string? address, double rating, List<SetWh> workingHours)
+public class RestaurantProfileDto(
+    Guid restaurantId,
+    string name,
+    string phone,
+    double? latitude,
+    double? longitude,
+    string? address,
+    double rating,
+    List<SetWh> workingHours)
 {
     public Guid RestaurantId { get; set; } = restaurantId;
     public string Name { get; set; } = name;

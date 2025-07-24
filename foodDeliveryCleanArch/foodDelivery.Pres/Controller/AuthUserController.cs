@@ -31,7 +31,7 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
-    
+
     [HttpGet("menu-{menuId}")]
     [Authorize]
     public IActionResult GetMenu(Guid menuId)
@@ -54,7 +54,7 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
-    
+
     [HttpGet("menus-{restaurantId}")]
     [Authorize]
     public IActionResult GetMenus(Guid restaurantId)
@@ -73,7 +73,7 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
         }
     }
-    
+
     [HttpGet("autocomplete/foods")]
     [Authorize]
     public IActionResult AutocompleteFoods(Guid restaurantId, string prefix)
@@ -96,7 +96,7 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
-    
+
     [HttpGet("profile/restaurant-{restaurantId}")]
     [Authorize]
     public IActionResult GetRestaurantProfile(Guid restaurantId)
@@ -119,6 +119,4 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
             return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
         }
     }
-    
-    
 }

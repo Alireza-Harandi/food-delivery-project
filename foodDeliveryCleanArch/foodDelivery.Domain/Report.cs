@@ -5,17 +5,14 @@ namespace foodDelivery.Domain;
 
 public class Report
 {
-    [Key]
-    public Guid Id { get; set; }
-    
+    [Key] public Guid Id { get; set; }
+
     public Guid CustomerId { get; set; }
-    [ForeignKey("CustomerId")]
-    public Customer? Customer { get; set; }
-    
+    [ForeignKey("CustomerId")] public Customer? Customer { get; set; }
+
     public Guid RestaurantId { get; set; }
-    [ForeignKey("RestaurantId")]
-    public Restaurant? Restaurant { get; set; }
-    
+    [ForeignKey("RestaurantId")] public Restaurant? Restaurant { get; set; }
+
     public DateTime Date { get; set; }
     public string Description { get; set; }
 

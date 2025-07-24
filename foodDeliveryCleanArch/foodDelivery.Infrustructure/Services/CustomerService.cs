@@ -265,7 +265,7 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
     {
         Token token = CheckAccess();
         Customer customer = dbManager.Customers.First(c => c.UserId == token.UserId);
-        
+
         return new CustomerProfileDto(
             customer.Id,
             customer.Name,

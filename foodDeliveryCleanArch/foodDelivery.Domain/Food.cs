@@ -5,11 +5,9 @@ namespace foodDelivery.Domain;
 
 public class Food
 {
-    [Key]
-    public Guid Id { get; set; }
+    [Key] public Guid Id { get; set; }
     public Guid MenuId { get; set; }
-    [ForeignKey("MenuId")]
-    public Menu? Menu { get; set; }
+    [ForeignKey("MenuId")] public Menu? Menu { get; set; }
 
     public string Name { get; set; }
     public double Price { get; set; }
@@ -27,5 +25,7 @@ public class Food
         Description = description;
     }
 
-    public Food() { }
+    public Food()
+    {
+    }
 }

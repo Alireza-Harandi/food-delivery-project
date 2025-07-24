@@ -10,7 +10,8 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace foodDelivery.Infrustructure.Services;
 
-public class AuthService(IConfiguration configuration, IHttpContextAccessor httpContext) : IAuthService
+public class AuthService(IConfiguration configuration, IHttpContextAccessor httpContext, DbManager dbManager)
+    : IAuthService
 {
     public string CreateToken(User user)
     {
@@ -24,7 +25,7 @@ public class AuthService(IConfiguration configuration, IHttpContextAccessor http
         var issuer = configuration["Jwt:Issuer"]!;
         var audience = configuration["Jwt:Audience"]!;
         var key = configuration["Jwt:Key"]!;
-    
+
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -56,7 +57,7 @@ public class AuthService(IConfiguration configuration, IHttpContextAccessor http
 
         return new Token(Guid.Parse(userIdClaim.Value), roleEnum);
     }
-    
+
     public Token CheckToken(Role role)
     {
         Token? token = GetClaims();
@@ -64,6 +65,7 @@ public class AuthService(IConfiguration configuration, IHttpContextAccessor http
             throw new UnauthorizedAccessException("Invalid token");
         if (token.Role != role)
             throw new UnauthorizedAccessException("Invalid role");
+        IsRevoked();
         return token;
     }
 
@@ -72,7 +74,22 @@ public class AuthService(IConfiguration configuration, IHttpContextAccessor http
         Token? token = GetClaims();
         if (token == null)
             throw new UnauthorizedAccessException("Invalid token");
+        IsRevoked();
         return token;
     }
 
+    public string IsRevoked()
+    {
+        var tokenHeader = httpContext.HttpContext?.Request.Headers["Authorization"].ToString();
+        if (string.IsNullOrEmpty(tokenHeader) || !tokenHeader.StartsWith("Bearer "))
+            throw new UnauthorizedAccessException("Token is missing.");
+
+        var token = tokenHeader.Replace("Bearer ", "");
+
+        bool isRevoked = dbManager.RevokedTokens.Any(rt => rt.Token == token);
+
+        if (isRevoked)
+            throw new UnauthorizedAccessException("This token has been revoked.");
+        return token;
+    }
 }

@@ -16,13 +16,13 @@ public class SetWh
 
 public class SetWhRequest
 {
-    public Guid RestaurantId { get; set; } 
+    public Guid RestaurantId { get; set; }
     public List<SetWh> WhList { get; set; }
 
     public SetWhRequest(Guid restaurantId)
     {
         RestaurantId = restaurantId;
-        WhList = new ();
+        WhList = new();
     }
 }
 

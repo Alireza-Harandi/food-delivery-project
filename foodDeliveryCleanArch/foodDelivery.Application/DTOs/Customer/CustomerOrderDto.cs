@@ -2,7 +2,12 @@
 
 namespace foodDelivery.Application.DTOs.Customer;
 
-public class CustomerOrderDto(Guid orderId, Guid restaurantId, OrderStatus orderStatus, double totalPrice, List<OrderItemDto> orderItems)
+public class CustomerOrderDto(
+    Guid orderId,
+    Guid restaurantId,
+    OrderStatus orderStatus,
+    double totalPrice,
+    List<OrderItemDto> orderItems)
 {
     public Guid OrderId { get; set; } = orderId;
     public Guid RestaurantId { get; set; } = restaurantId;

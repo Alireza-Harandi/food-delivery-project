@@ -17,7 +17,7 @@ public class Order
     public DateTime CreatedAt { get; set; }
     public List<OrderItem> Items { get; set; } = new();
     public double Total { get; set; }
-    
+
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public string Address { get; set; }

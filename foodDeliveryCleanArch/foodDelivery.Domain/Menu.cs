@@ -5,12 +5,10 @@ namespace foodDelivery.Domain;
 
 public class Menu
 {
-    [Key]
-    public Guid Id { get; set; }
+    [Key] public Guid Id { get; set; }
     public Guid RestaurantId { get; set; }
-    [ForeignKey("RestaurantId")]
-    public Restaurant? Restaurant { get; set; }
-    
+    [ForeignKey("RestaurantId")] public Restaurant? Restaurant { get; set; }
+
     public Category Category { get; set; }
     public string Name { get; set; }
     public List<Food> Foods { get; set; } = new();

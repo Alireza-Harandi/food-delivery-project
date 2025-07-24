@@ -5,14 +5,12 @@ namespace foodDelivery.Domain;
 
 public class Customer
 {
-    [Key]
-    public Guid Id { get; set; }
-    public string Name { get; set; }    
+    [Key] public Guid Id { get; set; }
+    public string Name { get; set; }
     public string PhoneNumber { get; set; }
-    
+
     public Guid UserId { get; set; }
-    [ForeignKey("UserId")]
-    public User? User { get; set; }
+    [ForeignKey("UserId")] public User? User { get; set; }
 
     public List<Order> Orders { get; set; } = new();
 
@@ -24,5 +22,7 @@ public class Customer
         UserId = userId;
     }
 
-    public Customer() { }
+    public Customer()
+    {
+    }
 }
