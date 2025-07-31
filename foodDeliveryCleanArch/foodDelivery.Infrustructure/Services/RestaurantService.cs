@@ -8,27 +8,32 @@ namespace foodDelivery.Infrustructure.Services;
 
 public class RestaurantService(DbManager dbManager, IAuthService authService) : IRestaurantService
 {
-    public Token CheckAccess(Guid restaurantId)
+    private async Task CheckAccessAsync(Guid restaurantId)
     {
-        Token token = authService.CheckToken(Role.Vendor);
-        if (!dbManager.Restaurants.Any(r => r.Id == restaurantId && r.Vendor!.UserId == token.UserId))
+        Token token = await authService.CheckTokenAsync(Role.Vendor);
+        bool hasAccess = await dbManager.Restaurants
+            .AnyAsync(r => r.Id == restaurantId && r.Vendor!.UserId == token.UserId);
+        if (!hasAccess)
             throw new UnauthorizedAccessException("You do not have access to this restaurant");
-        return token;
     }
 
-    public AddMenuResponse AddMenu(AddMenuRequest request)
+    public async Task<AddMenuResponse> AddMenuAsync(AddMenuRequest request)
     {
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
-        CheckAccess(request.RestaurantId);
-        if (dbManager.Menus.Any(m => m.Name == request.Name && m.RestaurantId == request.RestaurantId))
+
+        await CheckAccessAsync(request.RestaurantId);
+
+        bool exists = await dbManager.Menus
+            .AnyAsync(m => m.Name == request.Name && m.RestaurantId == request.RestaurantId);
+        if (exists)
             throw new ArgumentException("Menu already exists.");
 
         Menu menu = new Menu(
             request.RestaurantId, request.Category, request.Name
         );
-        dbManager.Menus.Add(menu);
-        dbManager.SaveChanges();
+        await dbManager.Menus.AddAsync(menu);
+        await dbManager.SaveChangesAsync();
 
         return new AddMenuResponse(
             menu.RestaurantId,
@@ -38,12 +43,16 @@ public class RestaurantService(DbManager dbManager, IAuthService authService) : 
         );
     }
 
-    public AddFoodResponse AddFood(AddFoodRequest request)
+    public async Task<AddFoodResponse> AddFoodAsync(AddFoodRequest request)
     {
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
-        CheckAccess(request.RestaurantId);
-        if (dbManager.Foods.Any(f => f.MenuId == request.MenuId && f.Name == request.Name))
+
+        await CheckAccessAsync(request.RestaurantId);
+
+        bool exists = await dbManager.Foods
+            .AnyAsync(f => f.MenuId == request.MenuId && f.Name == request.Name);
+        if (exists)
             throw new ArgumentException("Food already exists.");
 
         Food food = new Food(
@@ -54,10 +63,10 @@ public class RestaurantService(DbManager dbManager, IAuthService authService) : 
             request.Description
         );
 
-        dbManager.Foods.Add(food);
-        dbManager.SaveChanges();
+        await dbManager.Foods.AddAsync(food);
+        await dbManager.SaveChangesAsync();
 
-        Menu? menu = dbManager.Menus.FirstOrDefault(m => m.Id == request.MenuId);
+        Menu? menu = await dbManager.Menus.FirstOrDefaultAsync(m => m.Id == request.MenuId);
         if (menu == null)
             throw new KeyNotFoundException("Menu not found.");
 
@@ -72,45 +81,52 @@ public class RestaurantService(DbManager dbManager, IAuthService authService) : 
         );
     }
 
-    public void DeleteMenu(Guid menuId, Guid restaurantId)
+    public async Task DeleteMenuAsync(Guid menuId, Guid restaurantId)
     {
-        CheckAccess(restaurantId);
-        Menu? menu = dbManager.Menus.Find(menuId);
+        await CheckAccessAsync(restaurantId);
+
+        Menu? menu = await dbManager.Menus.FindAsync(menuId);
         if (menu == null)
             throw new KeyNotFoundException("Menu not found.");
+
         dbManager.Menus.Remove(menu);
-        dbManager.SaveChanges();
+        await dbManager.SaveChangesAsync();
     }
 
-    public void DeleteFood(Guid foodId, Guid restaurantId)
+    public async Task DeleteFoodAsync(Guid foodId, Guid restaurantId)
     {
-        CheckAccess(restaurantId);
-        Food? food = dbManager.Foods.Find(foodId);
+        await CheckAccessAsync(restaurantId);
+
+        Food? food = await dbManager.Foods.FindAsync(foodId);
         if (food == null)
             throw new KeyNotFoundException("Food not found.");
+
         dbManager.Foods.Remove(food);
-        dbManager.SaveChanges();
+        await dbManager.SaveChangesAsync();
     }
 
-    public void SetFoodStock(Guid restaurantId, Guid foodId, UpdateStockDto request)
+    public async Task SetFoodStockAsync(Guid restaurantId, Guid foodId, UpdateStockDto request)
     {
-        CheckAccess(restaurantId);
-        Food? food = dbManager.Foods.Find(foodId);
+        await CheckAccessAsync(restaurantId);
+
+        Food? food = await dbManager.Foods.FindAsync(foodId);
         if (food == null)
             throw new KeyNotFoundException("Food not found.");
+
         food.Stock = request.Stock;
-        dbManager.SaveChanges();
+        await dbManager.SaveChangesAsync();
     }
 
-    public SetLocationResponse SetLocation(SetLocationRequest request)
+    public async Task<SetLocationResponse> SetLocationAsync(SetLocationRequest request)
     {
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
-        CheckAccess(request.RestaurantId);
+
+        await CheckAccessAsync(request.RestaurantId);
 
         Location location = new Location(request.Latitude, request.Longitude, request.Address, request.RestaurantId);
-        dbManager.Locations.Add(location);
-        dbManager.SaveChanges();
+        await dbManager.Locations.AddAsync(location);
+        await dbManager.SaveChangesAsync();
 
         return new SetLocationResponse(
             location.RestaurantId,
@@ -120,18 +136,20 @@ public class RestaurantService(DbManager dbManager, IAuthService authService) : 
         );
     }
 
-    public SetWhResponse SetWh(SetWhRequest request)
+    public async Task<SetWhResponse> SetWhAsync(SetWhRequest request)
     {
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
-        CheckAccess(request.RestaurantId);
+
+        await CheckAccessAsync(request.RestaurantId);
 
         var list = request.WhList.Select(
             wh => new WorkingHour(
                 wh.Day, TimeOnly.Parse(wh.Start), TimeOnly.Parse(wh.End), request.RestaurantId
             )).ToList();
-        dbManager.WorkingHours.AddRange(list);
-        dbManager.SaveChanges();
+
+        await dbManager.WorkingHours.AddRangeAsync(list);
+        await dbManager.SaveChangesAsync();
 
         return new SetWhResponse(
             request.RestaurantId,
@@ -139,13 +157,14 @@ public class RestaurantService(DbManager dbManager, IAuthService authService) : 
         );
     }
 
-    public RestaurantOrderDto GetFinalizedOrders(Guid restaurantId)
+    public async Task<RestaurantOrderDto> GetFinalizedOrdersAsync(Guid restaurantId)
     {
-        CheckAccess(restaurantId);
-        Restaurant restaurant = dbManager.Restaurants
+        await CheckAccessAsync(restaurantId);
+
+        Restaurant restaurant = await dbManager.Restaurants
             .Include(r => r.Orders)
             .ThenInclude(o => o.Items)
-            .First(r => r.Id == restaurantId);
+            .FirstAsync(r => r.Id == restaurantId);
 
         List<OrderDetailDto> orderDetails = restaurant.Orders
             .Where(o => o.Status == OrderStatus.Finalized)

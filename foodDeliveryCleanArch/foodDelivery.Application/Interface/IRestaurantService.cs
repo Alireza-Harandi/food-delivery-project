@@ -5,13 +5,12 @@ namespace foodDelivery.Application.Interface;
 
 public interface IRestaurantService
 {
-    public SetLocationResponse SetLocation(SetLocationRequest request);
-    public SetWhResponse SetWh(SetWhRequest request);
-    public Token CheckAccess(Guid restaurantId);
-    public AddMenuResponse AddMenu(AddMenuRequest request);
-    public AddFoodResponse AddFood(AddFoodRequest request);
-    public void DeleteMenu(Guid menuId, Guid restaurantId);
-    public void DeleteFood(Guid foodId, Guid restaurantId);
-    public void SetFoodStock(Guid restaurantId, Guid foodId, UpdateStockDto request);
-    public RestaurantOrderDto GetFinalizedOrders(Guid restaurantId);
+    public Task<SetLocationResponse> SetLocationAsync(SetLocationRequest request);
+    public Task<SetWhResponse> SetWhAsync(SetWhRequest request);
+    public Task<AddMenuResponse> AddMenuAsync(AddMenuRequest request);
+    public Task<AddFoodResponse> AddFoodAsync(AddFoodRequest request);
+    public Task DeleteMenuAsync(Guid menuId, Guid restaurantId);
+    public Task DeleteFoodAsync(Guid foodId, Guid restaurantId);
+    public Task SetFoodStockAsync(Guid restaurantId, Guid foodId, UpdateStockDto request);
+    public Task<RestaurantOrderDto> GetFinalizedOrdersAsync(Guid restaurantId);
 }

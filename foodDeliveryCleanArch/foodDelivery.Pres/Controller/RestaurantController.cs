@@ -11,11 +11,11 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
 {
     [HttpPost("add/menu")]
     [Authorize]
-    public IActionResult AddMenu([FromBody] AddMenuRequest request)
+    public async Task<IActionResult> AddMenu([FromBody] AddMenuRequest request)
     {
         try
         {
-            AddMenuResponse response = restaurantService.AddMenu(request);
+            AddMenuResponse response = await restaurantService.AddMenuAsync(request);
             return Ok(response);
         }
         catch (UnauthorizedAccessException ex)
@@ -34,11 +34,11 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
 
     [HttpPost("add/food")]
     [Authorize]
-    public IActionResult AddFood([FromBody] AddFoodRequest request)
+    public async Task<IActionResult> AddFood([FromBody] AddFoodRequest request)
     {
         try
         {
-            AddFoodResponse response = restaurantService.AddFood(request);
+            AddFoodResponse response = await restaurantService.AddFoodAsync(request);
             return Ok(response);
         }
         catch (UnauthorizedAccessException ex)
@@ -61,11 +61,11 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
 
     [HttpDelete("remove/menu{menuId}-{restaurantId}")]
     [Authorize]
-    public IActionResult DeleteMenu(Guid menuId, Guid restaurantId)
+    public async Task<IActionResult> DeleteMenu(Guid menuId, Guid restaurantId)
     {
         try
         {
-            restaurantService.DeleteMenu(menuId, restaurantId);
+            await restaurantService.DeleteMenuAsync(menuId, restaurantId);
             return NoContent();
         }
         catch (UnauthorizedAccessException ex)
@@ -84,11 +84,11 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
 
     [HttpDelete("remove/food{foodId}-{restaurantId}")]
     [Authorize]
-    public IActionResult DeleteFood(Guid foodId, Guid restaurantId)
+    public async Task<IActionResult> DeleteFood(Guid foodId, Guid restaurantId)
     {
         try
         {
-            restaurantService.DeleteFood(foodId, restaurantId);
+            await restaurantService.DeleteFoodAsync(foodId, restaurantId);
             return NoContent();
         }
         catch (UnauthorizedAccessException ex)
@@ -107,11 +107,11 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
 
     [HttpPatch("set/stock-{foodId}-{restaurantId}")]
     [Authorize]
-    public IActionResult SetFoodStock(Guid restaurantId, Guid foodId, [FromBody] UpdateStockDto request)
+    public async Task<IActionResult> SetFoodStock(Guid restaurantId, Guid foodId, [FromBody] UpdateStockDto request)
     {
         try
         {
-            restaurantService.SetFoodStock(restaurantId, foodId, request);
+            await restaurantService.SetFoodStockAsync(restaurantId, foodId, request);
             return NoContent();
         }
         catch (UnauthorizedAccessException ex)
@@ -130,11 +130,11 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
 
     [HttpPut("set/location")]
     [Authorize]
-    public IActionResult SetLocation([FromBody] SetLocationRequest request)
+    public async Task<IActionResult> SetLocation([FromBody] SetLocationRequest request)
     {
         try
         {
-            var response = restaurantService.SetLocation(request);
+            var response = await restaurantService.SetLocationAsync(request);
             return Ok(response);
         }
         catch (UnauthorizedAccessException ex)
@@ -153,11 +153,11 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
 
     [HttpPut("set/working-hours")]
     [Authorize]
-    public IActionResult SetWorkingHours([FromBody] SetWhRequest request)
+    public async Task<IActionResult> SetWorkingHours([FromBody] SetWhRequest request)
     {
         try
         {
-            SetWhResponse response = restaurantService.SetWh(request);
+            SetWhResponse response = await restaurantService.SetWhAsync(request);
             return Ok(response);
         }
         catch (UnauthorizedAccessException ex)
@@ -176,11 +176,11 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
 
     [HttpGet("profile/restaurant/{restaurantId}")]
     [Authorize]
-    public IActionResult GetFinalizedOrders(Guid restaurantId)
+    public async Task<IActionResult> GetFinalizedOrders(Guid restaurantId)
     {
         try
         {
-            RestaurantOrderDto response = restaurantService.GetFinalizedOrders(restaurantId);
+            RestaurantOrderDto response = await restaurantService.GetFinalizedOrdersAsync(restaurantId);
             return Ok(response);
         }
         catch (UnauthorizedAccessException ex)
