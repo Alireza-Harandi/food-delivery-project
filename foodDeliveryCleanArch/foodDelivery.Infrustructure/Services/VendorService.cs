@@ -8,19 +8,22 @@ namespace foodDelivery.Infrustructure.Services;
 
 public class VendorService(DbManager dbManager, IAuthService authService) : IVendorService
 {
-    private Token CheckAccess()
+    private async Task<Token> CheckAccessAsync()
     {
-        Token token = authService.CheckToken(Role.Vendor);
-        if (!dbManager.Vendors.Any(v => v.UserId == token.UserId))
+        Token token = await authService.CheckTokenAsync(Role.Vendor);
+        bool exists = await dbManager.Vendors.AnyAsync(v => v.UserId == token.UserId);
+        if (!exists)
             throw new UnauthorizedAccessException("Vendor not found");
         return token;
     }
 
-    public VendorSignupResponse Signup(VendorSignupRequest request)
+    public async Task<VendorSignupResponse> SignupAsync(VendorSignupRequest request)
     {
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
-        if (dbManager.Users.Any(u => u.Username == request.Username))
+
+        bool usernameTaken = await dbManager.Users.AnyAsync(u => u.Username == request.Username);
+        if (usernameTaken)
             throw new AggregateException("Username already taken");
 
         var phoneRegex = new Regex(@"^(\+98|0)?9\d{9}$");
@@ -28,50 +31,56 @@ public class VendorService(DbManager dbManager, IAuthService authService) : IVen
             throw new ArgumentException("Invalid phone number");
 
         User user = new User(request.Username, request.Password, Role.Vendor);
-        dbManager.Users.Add(user);
+        await dbManager.Users.AddAsync(user);
         Vendor vendor = new Vendor(user.Id, request.Name, request.Phone);
-        dbManager.Vendors.Add(vendor);
-        dbManager.SaveChanges();
+        await dbManager.Vendors.AddAsync(vendor);
+        await dbManager.SaveChangesAsync();
 
         return new VendorSignupResponse(
             authService.CreateToken(user)
         );
     }
 
-    public RegisterRestaurantResponse RegisterRestaurant(RegisterRestaurantRequest request)
+    public async Task<RegisterRestaurantResponse> RegisterRestaurantAsync(RegisterRestaurantRequest request)
     {
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
-        Token token = CheckAccess();
+
+        Token token = await CheckAccessAsync();
 
         var phoneRegex = new Regex(@"^(\+98|0)?9\d{9}$");
         if (!phoneRegex.IsMatch(request.Phone))
             throw new ArgumentException("Invalid phone number");
 
+        var vendor = await dbManager.Vendors.FirstAsync(v => v.UserId == token.UserId);
+
         Restaurant restaurant = new Restaurant(
-            dbManager.Vendors.First(v => v.UserId == token.UserId).Id,
+            vendor.Id,
             request.Name,
             request.Phone
         );
 
-        dbManager.Restaurants.Add(restaurant);
-        dbManager.SaveChanges();
+        await dbManager.Restaurants.AddAsync(restaurant);
+        await dbManager.SaveChangesAsync();
 
         return new RegisterRestaurantResponse(
             restaurant.Id, restaurant.VendorId, restaurant.Name, restaurant.Phone
         );
     }
 
-    public VendorProfileDto GetProfile()
+    public async Task<VendorProfileDto> GetProfileAsync()
     {
-        Token token = CheckAccess();
-        Vendor? vendor = dbManager.Vendors
+        Token token = await CheckAccessAsync();
+
+        Vendor? vendor = await dbManager.Vendors
             .Include(v => v.Restaurants)
-            .FirstOrDefault(v => v.UserId == token.UserId);
+            .FirstOrDefaultAsync(v => v.UserId == token.UserId);
+
         if (vendor == null)
             throw new UnauthorizedAccessException("Vendor not found");
+        Console.WriteLine($"{vendor.Id}, {vendor.Name}, {vendor.Phone}");
 
-        return new VendorProfileDto(
+        VendorProfileDto result = new VendorProfileDto(
             vendor.Id,
             vendor.Name,
             vendor.Phone,
@@ -80,5 +89,7 @@ public class VendorService(DbManager dbManager, IAuthService authService) : IVen
                 r.Name
             )).ToList()
         );
+
+        return result;
     }
 }
