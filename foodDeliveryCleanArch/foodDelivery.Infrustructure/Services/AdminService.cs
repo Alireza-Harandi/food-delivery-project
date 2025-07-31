@@ -7,36 +7,37 @@ namespace foodDelivery.Infrustructure.Services;
 
 public class AdminService(DbManager dbManager, IAuthService authService) : IAdminService
 {
-    private Token CheckAccess()
+    private async Task CheckAccessAsync()
     {
-        Token token = authService.CheckToken(Role.Admin);
-        if (!dbManager.Users.Any(u => u.Id == token.UserId && u.Role == Role.Admin))
+        Token token = await authService.CheckTokenAsync(Role.Admin);
+        bool exists = await dbManager.Users.AnyAsync(u => u.Id == token.UserId && u.Role == Role.Admin);
+        if (!exists)
             throw new UnauthorizedAccessException("admin not found");
-        return token;
     }
 
-    public AdminSignupResponse Signup(AdminSignupRequest request)
+    public async Task<AdminSignupResponse> SignupAsync(AdminSignupRequest request)
     {
-        CheckAccess();
+        await CheckAccessAsync();
+
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
-        if (dbManager.Users.Any(u => u.Username == request.Username))
+
+        bool usernameExists = await dbManager.Users.AnyAsync(u => u.Username == request.Username);
+        if (usernameExists)
             throw new ArgumentException("Username already taken");
 
-        User user = new User(request.Username, request.Password, Role.Admin);
+        User user = new(request.Username, request.Password, Role.Admin);
         dbManager.Users.Add(user);
-        dbManager.SaveChanges();
+        await dbManager.SaveChangesAsync();
 
-        return new AdminSignupResponse(
-            user.Username,
-            user.Password
-        );
+        return new AdminSignupResponse(user.Username, user.Password);
     }
 
-    public ReportsDto GetReports()
+    public async Task<ReportsDto> GetReportsAsync()
     {
-        CheckAccess();
-        List<ReportDetails> reports = dbManager.Reports
+        await CheckAccessAsync();
+
+        List<ReportDetails> reports = await dbManager.Reports
             .Include(r => r.Customer)
             .Include(r => r.Restaurant)
             .Select(r => new ReportDetails(
@@ -47,7 +48,7 @@ public class AdminService(DbManager dbManager, IAuthService authService) : IAdmi
                 r.Restaurant!.Name,
                 r.Date,
                 r.Description
-            )).ToList();
+            )).ToListAsync();
 
         return new ReportsDto(reports);
     }

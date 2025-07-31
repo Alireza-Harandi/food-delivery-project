@@ -11,11 +11,11 @@ public class AdminController(IAdminService adminService) : ControllerBase
 {
     [Authorize]
     [HttpPost("signup")]
-    public IActionResult Signup([FromBody] AdminSignupRequest request)
+    public async Task<IActionResult> Signup([FromBody] AdminSignupRequest request)
     {
         try
         {
-            var response = adminService.Signup(request);
+            AdminSignupResponse response = await adminService.SignupAsync(request);
             return Ok(response);
         }
         catch (UnauthorizedAccessException e)
@@ -34,11 +34,11 @@ public class AdminController(IAdminService adminService) : ControllerBase
 
     [Authorize]
     [HttpGet("reports")]
-    public IActionResult GetReports()
+    public async Task<IActionResult> GetReports()
     {
         try
         {
-            ReportsDto response = adminService.GetReports();
+            ReportsDto response = await adminService.GetReportsAsync();
             return Ok(response);
         }
         catch (UnauthorizedAccessException e)
