@@ -4,13 +4,13 @@ namespace foodDelivery.Application.Interface;
 
 public interface ICustomerService
 {
-    public CustomerSignupResponse Signup(CustomerSignupRequest request);
-    public AddToOrderResponse AddToOrder(AddToOrderRequest request);
-    public void SetOrderQuantity(SetOrderQuantityDto request);
-    public CustomerOrderDto GetOrders(Guid orderId);
-    public FinalizeOrderResponse FinalizeOrder(FinalizeOrderRequest request);
-    public void ReportRestaurant(ReportRestaurantDto request);
-    public void DeleteOrder(Guid orderId);
-    public void SubmitRating(SubmitRatingDto request);
-    public CustomerProfileDto GetProfile();
+    public Task<CustomerSignupResponse> SignupAsync(CustomerSignupRequest request);
+    public Task<AddToOrderResponse> AddToOrderAsync(AddToOrderRequest request);
+    public Task SetOrderQuantityAsync(SetOrderQuantityDto request);
+    public Task<CustomerOrderDto> GetOrdersAsync(Guid orderId);
+    public Task<FinalizeOrderResponse> FinalizeOrderAsync(FinalizeOrderRequest request);
+    public Task ReportRestaurantAsync(ReportRestaurantDto request);
+    public Task DeleteOrderAsync(Guid orderId);
+    public Task SubmitRatingAsync(SubmitRatingDto request);
+    public Task<CustomerProfileDto> GetProfileAsync();
 }

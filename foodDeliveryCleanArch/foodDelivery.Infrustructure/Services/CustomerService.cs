@@ -8,19 +8,19 @@ namespace foodDelivery.Infrustructure.Services;
 
 public class CustomerService(DbManager dbManager, IAuthService authService) : ICustomerService
 {
-    private Token CheckAccess()
+    private async Task<Token> CheckAccessAsync()
     {
-        Token token = authService.CheckToken(Role.Customer);
-        if (!dbManager.Customers.Any(c => c.UserId == token.UserId))
+        Token token = await authService.CheckTokenAsync(Role.Customer);
+        if (!await dbManager.Customers.AnyAsync(c => c.UserId == token.UserId))
             throw new UnauthorizedAccessException("customer not found");
         return token;
     }
 
-    public CustomerSignupResponse Signup(CustomerSignupRequest request)
+    public async Task<CustomerSignupResponse> SignupAsync(CustomerSignupRequest request)
     {
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
-        if (dbManager.Users.Any(u => u.Username == request.Username))
+        if (await dbManager.Users.AnyAsync(u => u.Username == request.Username))
             throw new ArgumentException("Username already taken");
 
         var phoneRegex = new Regex(@"^(\+98|0)?9\d{9}$");
@@ -31,23 +31,25 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         dbManager.Users.Add(user);
         Customer customer = new Customer(request.Name, request.PhoneNumber, user.Id);
         dbManager.Customers.Add(customer);
-        dbManager.SaveChanges();
+        await dbManager.SaveChangesAsync();
 
         return new CustomerSignupResponse(
             authService.CreateToken(user)
         );
     }
 
-    public AddToOrderResponse AddToOrder(AddToOrderRequest request)
+    public async Task<AddToOrderResponse> AddToOrderAsync(AddToOrderRequest request)
     {
-        Token token = CheckAccess();
+        Token token = await CheckAccessAsync();
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
 
-        Customer customer = dbManager.Customers.FirstOrDefault(c => c.UserId == token.UserId)!;
+        Customer? customer = await dbManager.Customers.FirstOrDefaultAsync(c => c.UserId == token.UserId);
+        if (customer == null)
+            throw new UnauthorizedAccessException("customer not found");
 
-        Order? order = dbManager.Orders
-            .FirstOrDefault(o =>
+        Order? order = await dbManager.Orders
+            .FirstOrDefaultAsync(o =>
                 o.CustomerId == customer.Id &&
                 o.RestaurantId == request.RestaurantId
             );
@@ -66,8 +68,8 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
             request.Quantity
         );
         dbManager.OrderItems.Add(orderItem);
-        order.Total = CalculateTotalPrice(order.Id);
-        dbManager.SaveChanges();
+        order.Total = await CalculateTotalPriceAsync(order.Id);
+        await dbManager.SaveChangesAsync();
 
         return new AddToOrderResponse(
             order.Id,
@@ -75,12 +77,12 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         );
     }
 
-    private double CalculateTotalPrice(Guid orderId)
+    private async Task<double> CalculateTotalPriceAsync(Guid orderId)
     {
-        List<OrderItem> orderItems = dbManager.OrderItems
+        List<OrderItem> orderItems = await dbManager.OrderItems
             .Include(o => o.Food)
             .Where(o => o.OrderId == orderId)
-            .ToList();
+            .ToListAsync();
 
         double total = 0;
         foreach (var orderItem in orderItems)
@@ -91,28 +93,30 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         return total;
     }
 
-    public void SetOrderQuantity(SetOrderQuantityDto request)
+    public async Task SetOrderQuantityAsync(SetOrderQuantityDto request)
     {
-        Token token = CheckAccess();
+        Token token = await CheckAccessAsync();
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
-        Customer customer = dbManager.Customers.FirstOrDefault(c => c.UserId == token.UserId)!;
+        Customer? customer = await dbManager.Customers.FirstOrDefaultAsync(c => c.UserId == token.UserId);
+        if (customer == null)
+            throw new UnauthorizedAccessException("customer not found");
 
-        OrderItem? orderItem = dbManager.OrderItems
+        OrderItem? orderItem = await dbManager.OrderItems
             .Include(i => i.Order)
-            .FirstOrDefault(i =>
+            .FirstOrDefaultAsync(i =>
                 i.Id == request.OrderItemId);
 
-        Order? order = dbManager.Orders
+        Order? order = await dbManager.Orders
             .Include(o => o.Items)
-            .FirstOrDefault(o => o.Id == request.OrderId);
+            .FirstOrDefaultAsync(o => o.Id == request.OrderId);
 
         if (order == null)
             throw new KeyNotFoundException("Order not found");
         if (orderItem == null)
             throw new KeyNotFoundException("OrderItem not found");
         if (orderItem.Order!.CustomerId != customer.Id)
-            throw new UnauthorizedAccessException("Customer is not access");
+            throw new UnauthorizedAccessException("Customer has no access");
 
         if (request.Quantity == 0)
         {
@@ -123,26 +127,28 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         else
         {
             orderItem.Quantity = request.Quantity;
-            order.Total = CalculateTotalPrice(order.Id);
+            order.Total = await CalculateTotalPriceAsync(order.Id);
         }
 
-        dbManager.SaveChanges();
+        await dbManager.SaveChangesAsync();
     }
 
-    public CustomerOrderDto GetOrders(Guid orderId)
+    public async Task<CustomerOrderDto> GetOrdersAsync(Guid orderId)
     {
-        Token token = CheckAccess();
-        Customer customer = dbManager.Customers.FirstOrDefault(c => c.UserId == token.UserId)!;
+        Token token = await CheckAccessAsync();
+        Customer? customer = await dbManager.Customers.FirstOrDefaultAsync(c => c.UserId == token.UserId);
+        if (customer == null)
+            throw new UnauthorizedAccessException("customer not found");
 
-        Order? order = dbManager.Orders
+        Order? order = await dbManager.Orders
             .Include(o => o.Items)
             .Include(o => o.Customer)
-            .FirstOrDefault(o => o.Id == orderId);
+            .FirstOrDefaultAsync(o => o.Id == orderId);
 
         if (order == null)
             throw new KeyNotFoundException("Order not found");
         if (order.CustomerId != customer.Id)
-            throw new UnauthorizedAccessException("Customer is not access");
+            throw new UnauthorizedAccessException("Customer has no access");
 
         return new CustomerOrderDto(
             order.Id,
@@ -157,40 +163,43 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         );
     }
 
-    public FinalizeOrderResponse FinalizeOrder(FinalizeOrderRequest request)
+    public async Task<FinalizeOrderResponse> FinalizeOrderAsync(FinalizeOrderRequest request)
     {
-        Token token = CheckAccess();
-        Customer customer = dbManager.Customers.First(c => c.UserId == token.UserId);
+        Token token = await CheckAccessAsync();
+        Customer customer = await dbManager.Customers.FirstAsync(c => c.UserId == token.UserId);
 
-        Order? order = dbManager.Orders
+        Order? order = await dbManager.Orders
             .Include(o => o.Customer)
             .Include(o => o.Items)
-            .FirstOrDefault(o => o.Id == request.OrderId);
+            .FirstOrDefaultAsync(o => o.Id == request.OrderId);
 
         if (order == null)
             throw new KeyNotFoundException("Order not found");
         if (order.CustomerId != customer.Id)
-            throw new UnauthorizedAccessException("Customer is not access");
+            throw new UnauthorizedAccessException("Customer has no access");
 
-        if (!IsFoodsAvailable(order.Items))
+        if (!await IsFoodsAvailableAsync(order.Items))
             throw new InvalidOperationException("Insufficient quantity for one or more food items in the order");
         order.Longitude = request.Longitude;
         order.Latitude = request.Latitude;
         order.Address = request.Address;
         order.Status = OrderStatus.Finalized;
         order.CreatedAt = DateTime.UtcNow;
-        dbManager.SaveChanges();
+        await dbManager.SaveChangesAsync();
 
         return new FinalizeOrderResponse(
             order.Id
         );
     }
 
-    private bool IsFoodsAvailable(List<OrderItem> items)
+    private async Task<bool> IsFoodsAvailableAsync(List<OrderItem> items)
     {
+        var foodIds = items.Select(i => i.FoodId).ToList();
+        var foods = await dbManager.Foods.Where(f => foodIds.Contains(f.Id)).ToListAsync();
+
         foreach (var item in items)
         {
-            Food? food = dbManager.Foods.FirstOrDefault(f => f.Id == item.FoodId);
+            var food = foods.FirstOrDefault(f => f.Id == item.FoodId);
             if (food == null || food.Stock < item.Quantity)
             {
                 return false;
@@ -199,21 +208,21 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
 
         foreach (var item in items)
         {
-            Food food = dbManager.Foods.First(f => f.Id == item.FoodId);
+            var food = foods.First(f => f.Id == item.FoodId);
             food.Stock -= item.Quantity;
         }
 
-        dbManager.SaveChanges();
+        await dbManager.SaveChangesAsync();
         return true;
     }
 
-    public void ReportRestaurant(ReportRestaurantDto request)
+    public async Task ReportRestaurantAsync(ReportRestaurantDto request)
     {
-        Token token = CheckAccess();
+        Token token = await CheckAccessAsync();
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
 
-        Customer customer = dbManager.Customers.First(c => c.UserId == token.UserId);
+        Customer customer = await dbManager.Customers.FirstAsync(c => c.UserId == token.UserId);
         Report report = new Report(
             request.RestaurantId,
             customer.Id,
@@ -221,50 +230,50 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
         );
 
         dbManager.Reports.Add(report);
-        dbManager.SaveChanges();
+        await dbManager.SaveChangesAsync();
     }
 
-    public void DeleteOrder(Guid orderId)
+    public async Task DeleteOrderAsync(Guid orderId)
     {
-        Token token = CheckAccess();
-        Order? order = dbManager.Orders
+        Token token = await CheckAccessAsync();
+        Order? order = await dbManager.Orders
             .Include(o => o.Customer)
             .Include(o => o.Items)
             .Include(o => o.Restaurant)
-            .FirstOrDefault(o => o.Id == orderId);
+            .FirstOrDefaultAsync(o => o.Id == orderId);
         if (order == null)
             throw new KeyNotFoundException("Order not found");
-        if (order.CustomerId != token.UserId)
-            throw new UnauthorizedAccessException("Customer is not access");
+        if (order.Customer!.UserId != token.UserId)
+            throw new UnauthorizedAccessException("Customer has no access");
 
         dbManager.Orders.Remove(order);
-        dbManager.SaveChanges();
+        await dbManager.SaveChangesAsync();
     }
 
-    public void SubmitRating(SubmitRatingDto request)
+    public async Task SubmitRatingAsync(SubmitRatingDto request)
     {
-        Token token = CheckAccess();
-        Order? order = dbManager.Orders
+        Token token = await CheckAccessAsync();
+        Order? order = await dbManager.Orders
             .Include(o => o.Customer)
             .Include(o => o.Restaurant)
-            .FirstOrDefault(o => o.Id == request.OrderId);
+            .FirstOrDefaultAsync(o => o.Id == request.OrderId);
         if (order == null)
             throw new KeyNotFoundException("Order not found");
-        if (order.CustomerId != token.UserId)
-            throw new UnauthorizedAccessException("Customer is not access");
+        if (order.Customer!.UserId != token.UserId)
+            throw new UnauthorizedAccessException("Customer has no access");
 
         order.Restaurant!.RatingSum += request.Score;
         order.Restaurant.RatingCount++;
         order.Restaurant.Rating = order.Restaurant.RatingSum / order.Restaurant.RatingCount;
 
         dbManager.Orders.Remove(order);
-        dbManager.SaveChanges();
+        await dbManager.SaveChangesAsync();
     }
 
-    public CustomerProfileDto GetProfile()
+    public async Task<CustomerProfileDto> GetProfileAsync()
     {
-        Token token = CheckAccess();
-        Customer customer = dbManager.Customers.First(c => c.UserId == token.UserId);
+        Token token = await CheckAccessAsync();
+        Customer customer = await dbManager.Customers.FirstAsync(c => c.UserId == token.UserId);
 
         return new CustomerProfileDto(
             customer.Id,
