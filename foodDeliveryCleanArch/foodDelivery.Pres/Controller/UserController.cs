@@ -9,11 +9,11 @@ namespace foodDelivery.Pres.Controller;
 public class UserController(IUserService userService) : ControllerBase
 {
     [HttpPost("login")]
-    public IActionResult Login([FromBody] UserLoginRequest request)
+    public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
     {
         try
         {
-            var response = userService.Login(request);
+            var response = await userService.LoginAsync(request);
             return Ok(response);
         }
         catch (ArgumentException e)
@@ -31,11 +31,11 @@ public class UserController(IUserService userService) : ControllerBase
     }
 
     [HttpPost("logout")]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
         try
         {
-            userService.Logout();
+            await userService.LogoutAsync();
             return NoContent();
         }
         catch (UnauthorizedAccessException e)
