@@ -11,11 +11,11 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
 {
     [HttpGet("autocomplete/restaurants")]
     [Authorize]
-    public IActionResult AutocompleteRestaurants(string prefix)
+    public async Task<IActionResult> AutocompleteRestaurants(string prefix)
     {
         try
         {
-            var response = authUserService.AutocompleteRestaurants(prefix);
+            var response = await authUserService.AutocompleteRestaurantsAsync(prefix);
             return Ok(response);
         }
         catch (ArgumentException e)
@@ -34,11 +34,11 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
 
     [HttpGet("menu-{menuId}")]
     [Authorize]
-    public IActionResult GetMenu(Guid menuId)
+    public async Task<IActionResult> GetMenu(Guid menuId)
     {
         try
         {
-            var response = authUserService.GetMenu(menuId);
+            var response = await authUserService.GetMenusAsync(menuId);
             return Ok(response);
         }
         catch (UnauthorizedAccessException ex)
@@ -57,11 +57,11 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
 
     [HttpGet("menus-{restaurantId}")]
     [Authorize]
-    public IActionResult GetMenus(Guid restaurantId)
+    public async Task<IActionResult> GetMenus(Guid restaurantId)
     {
         try
         {
-            var response = authUserService.GetMenus(restaurantId);
+            var response = await authUserService.GetMenusAsync(restaurantId);
             return Ok(response);
         }
         catch (UnauthorizedAccessException ex)
@@ -76,11 +76,11 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
 
     [HttpGet("autocomplete/foods")]
     [Authorize]
-    public IActionResult AutocompleteFoods(Guid restaurantId, string prefix)
+    public async Task<IActionResult> AutocompleteFoods(Guid restaurantId, string prefix)
     {
         try
         {
-            var response = authUserService.AutocompleteFoods(restaurantId, prefix);
+            var response = await authUserService.AutocompleteFoodsAsync(restaurantId, prefix);
             return Ok(response);
         }
         catch (ArgumentException e)
@@ -99,11 +99,11 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
 
     [HttpGet("profile/restaurant-{restaurantId}")]
     [Authorize]
-    public IActionResult GetRestaurantProfile(Guid restaurantId)
+    public async Task<IActionResult> GetRestaurantProfile(Guid restaurantId)
     {
         try
         {
-            RestaurantProfileDto response = authUserService.GetRestaurantProfile(restaurantId);
+            RestaurantProfileDto response = await authUserService.GetRestaurantProfileAsync(restaurantId);
             return Ok(response);
         }
         catch (KeyNotFoundException e)

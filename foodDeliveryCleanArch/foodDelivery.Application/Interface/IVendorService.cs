@@ -5,7 +5,7 @@ namespace foodDelivery.Application.Interface;
 
 public interface IVendorService
 {
-    public VendorSignupResponse Signup(VendorSignupRequest request);
-    public RegisterRestaurantResponse RegisterRestaurant(RegisterRestaurantRequest request);
-    public VendorProfileDto GetProfile();
+    public Task<VendorSignupResponse> SignupAsync(VendorSignupRequest request);
+    public Task<RegisterRestaurantResponse> RegisterRestaurantAsync(RegisterRestaurantRequest request);
+    public Task<VendorProfileDto> GetProfileAsync();
 }

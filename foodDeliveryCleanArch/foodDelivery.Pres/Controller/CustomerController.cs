@@ -2,6 +2,7 @@
 using foodDelivery.Application.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ArgumentException = System.ArgumentException;
 
 namespace foodDelivery.Pres.Controller;
 
@@ -10,11 +11,11 @@ namespace foodDelivery.Pres.Controller;
 public class CustomerController(ICustomerService customerService) : ControllerBase
 {
     [HttpPost("signup")]
-    public IActionResult Signup([FromBody] CustomerSignupRequest request)
+    public async Task<IActionResult> Signup([FromBody] CustomerSignupRequest request)
     {
         try
         {
-            var response = customerService.Signup(request);
+            var response = await customerService.SignupAsync(request);
             return Ok(response);
         }
         catch (ArgumentException e)
@@ -29,11 +30,11 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
 
     [HttpPost("add/to-order")]
     [Authorize]
-    public IActionResult AddToOrder(AddToOrderRequest request)
+    public async Task<IActionResult> AddToOrder(AddToOrderRequest request)
     {
         try
         {
-            var response = customerService.AddToOrder(request);
+            var response = await customerService.AddToOrderAsync(request);
             return Ok(response);
         }
         catch (ArgumentException e)
@@ -52,11 +53,11 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
 
     [HttpPatch("set/order-quantity")]
     [Authorize]
-    public IActionResult SetOrderQuantity(SetOrderQuantityDto request)
+    public async Task<IActionResult> SetOrderQuantity(SetOrderQuantityDto request)
     {
         try
         {
-            customerService.SetOrderQuantity(request);
+            await customerService.SetOrderQuantityAsync(request);
             return NoContent();
         }
         catch (ArgumentException e)
@@ -79,11 +80,11 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
 
     [HttpGet("orders-{orderId}")]
     [Authorize]
-    public IActionResult GetOrders(Guid orderId)
+    public async Task<IActionResult> GetOrders(Guid orderId)
     {
         try
         {
-            CustomerOrderDto response = customerService.GetOrders(orderId);
+            CustomerOrderDto response = await customerService.GetOrdersAsync(orderId);
             return Ok(response);
         }
         catch (UnauthorizedAccessException e)
@@ -103,11 +104,11 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
 
     [HttpGet("finalize/order-{orderId}")]
     [Authorize]
-    public IActionResult FinalizeOrder(FinalizeOrderRequest request)
+    public async Task<IActionResult> FinalizeOrder(FinalizeOrderRequest request)
     {
         try
         {
-            FinalizeOrderResponse response = customerService.FinalizeOrder(request);
+            FinalizeOrderResponse response = await customerService.FinalizeOrderAsync(request);
             return Ok(response);
         }
         catch (UnauthorizedAccessException e)
@@ -130,11 +131,11 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
 
     [HttpPost("report")]
     [Authorize]
-    public IActionResult ReportRestaurant(ReportRestaurantDto request)
+    public async Task<IActionResult> ReportRestaurant(ReportRestaurantDto request)
     {
         try
         {
-            customerService.ReportRestaurant(request);
+            await customerService.ReportRestaurantAsync(request);
             return NoContent();
         }
         catch (UnauthorizedAccessException e)
@@ -153,11 +154,11 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
 
     [HttpDelete("delete/order-{orderId}")]
     [Authorize]
-    public IActionResult DeleteOrder(Guid orderId)
+    public async Task<IActionResult> DeleteOrder(Guid orderId)
     {
         try
         {
-            customerService.DeleteOrder(orderId);
+            await customerService.DeleteOrderAsync(orderId);
             return NoContent();
         }
         catch (UnauthorizedAccessException e)
@@ -176,11 +177,11 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
 
     [HttpPost("submit/rating")]
     [Authorize]
-    public IActionResult SubmitRating(SubmitRatingDto request)
+    public async Task<IActionResult> SubmitRating(SubmitRatingDto request)
     {
         try
         {
-            customerService.SubmitRating(request);
+            await customerService.SubmitRatingAsync(request);
             return NoContent();
         }
         catch (UnauthorizedAccessException e)
@@ -199,11 +200,11 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
 
     [HttpGet("profile")]
     [Authorize]
-    public IActionResult GetProfile()
+    public async Task<IActionResult> GetProfile()
     {
         try
         {
-            CustomerProfileDto response = customerService.GetProfile();
+            CustomerProfileDto response = await customerService.GetProfileAsync();
             return Ok(response);
         }
         catch (UnauthorizedAccessException e)

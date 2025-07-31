@@ -1,18 +1,20 @@
 ﻿using foodDelivery.Application.DTOs.User;
-using foodDelivery.Application.DTOs.Vendor;
 using foodDelivery.Application.Interface;
 using foodDelivery.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace foodDelivery.Infrustructure.Services;
 
 public class UserService(DbManager dbManager, IAuthService authService) : IUserService
 {
-    public UserLoginResponse Login(UserLoginRequest request)
+    public async Task<UserLoginResponse> LoginAsync(UserLoginRequest request)
     {
         if (request.GetType().GetProperties().Any(p => p.GetValue(request) == null))
             throw new ArgumentException("All fields are required");
-        User? user =
-            dbManager.Users.FirstOrDefault(u => u.Username == request.Username && u.Password == request.Password);
+
+        User? user = await dbManager.Users
+            .FirstOrDefaultAsync(u => u.Username == request.Username && u.Password == request.Password);
+
         if (user == null)
             throw new UnauthorizedAccessException("Invalid username or password.");
 
@@ -21,13 +23,15 @@ public class UserService(DbManager dbManager, IAuthService authService) : IUserS
         );
     }
 
-    public void Logout()
+    public async Task LogoutAsync()
     {
-        string token = authService.IsRevoked();
-        dbManager.RevokedTokens.Add(new RevokedToken(
+        string token = await authService.IsRevokedAsync();
+
+        await dbManager.RevokedTokens.AddAsync(new RevokedToken(
             token,
             DateTime.UtcNow.AddMinutes(10)
         ));
-        dbManager.SaveChanges();
+
+        await dbManager.SaveChangesAsync();
     }
 }

@@ -1,7 +1,5 @@
-﻿using foodDelivery.Application.DTOs.Restaurant;
-using foodDelivery.Application.DTOs.Vendor;
+﻿using foodDelivery.Application.DTOs.Vendor;
 using foodDelivery.Application.Interface;
-using foodDelivery.Infrustructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,11 +10,11 @@ namespace foodDelivery.Pres.Controller;
 public class VendorController(IVendorService vendorService) : ControllerBase
 {
     [HttpPost("signup")]
-    public IActionResult Signup([FromBody] VendorSignupRequest request)
+    public async Task<IActionResult> Signup([FromBody] VendorSignupRequest request)
     {
         try
         {
-            var response = vendorService.Signup(request);
+            var response = await vendorService.SignupAsync(request);
             return Ok(response);
         }
         catch (ArgumentException e)
@@ -35,11 +33,11 @@ public class VendorController(IVendorService vendorService) : ControllerBase
 
     [HttpPost("register/restaurant")]
     [Authorize]
-    public IActionResult RegisterRestaurant([FromBody] RegisterRestaurantRequest request)
+    public async Task<IActionResult> RegisterRestaurant([FromBody] RegisterRestaurantRequest request)
     {
         try
         {
-            var response = vendorService.RegisterRestaurant(request);
+            var response = await vendorService.RegisterRestaurantAsync(request);
             return Ok(response);
         }
         catch (ArgumentException e)
@@ -58,11 +56,11 @@ public class VendorController(IVendorService vendorService) : ControllerBase
 
     [HttpGet("profile")]
     [Authorize]
-    public IActionResult GetProfile()
+    public async Task<IActionResult> GetProfile()
     {
         try
         {
-            var response = vendorService.GetProfile();
+            var response = await vendorService.GetProfileAsync();
             return Ok(response);
         }
         catch (UnauthorizedAccessException ex)

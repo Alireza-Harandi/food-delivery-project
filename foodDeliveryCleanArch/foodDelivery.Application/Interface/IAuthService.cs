@@ -5,7 +5,7 @@ namespace foodDelivery.Application.Interface;
 public interface IAuthService
 {
     public string CreateToken(User user);
-    public Token CheckToken(Role role);
-    public Token CheckToken();
-    public string IsRevoked();
+    public Task<Token> CheckTokenAsync(Role role);
+    public Task<Token> CheckTokenAsync();
+    public Task<string> IsRevokedAsync();
 }

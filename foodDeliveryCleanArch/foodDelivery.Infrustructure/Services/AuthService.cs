@@ -4,6 +4,7 @@ using System.Text;
 using foodDelivery.Application.Interface;
 using foodDelivery.Domain;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
@@ -58,27 +59,29 @@ public class AuthService(IConfiguration configuration, IHttpContextAccessor http
         return new Token(Guid.Parse(userIdClaim.Value), roleEnum);
     }
 
-    public Token CheckToken(Role role)
+    public async Task<Token> CheckTokenAsync(Role role)
     {
         Token? token = GetClaims();
         if (token == null)
             throw new UnauthorizedAccessException("Invalid token");
         if (token.Role != role)
             throw new UnauthorizedAccessException("Invalid role");
-        IsRevoked();
+
+        await IsRevokedAsync();
         return token;
     }
 
-    public Token CheckToken()
+    public async Task<Token> CheckTokenAsync()
     {
         Token? token = GetClaims();
         if (token == null)
             throw new UnauthorizedAccessException("Invalid token");
-        IsRevoked();
+
+        await IsRevokedAsync();
         return token;
     }
 
-    public string IsRevoked()
+    public async Task<string> IsRevokedAsync()
     {
         var tokenHeader = httpContext.HttpContext?.Request.Headers["Authorization"].ToString();
         if (string.IsNullOrEmpty(tokenHeader) || !tokenHeader.StartsWith("Bearer "))
@@ -86,10 +89,11 @@ public class AuthService(IConfiguration configuration, IHttpContextAccessor http
 
         var token = tokenHeader.Replace("Bearer ", "");
 
-        bool isRevoked = dbManager.RevokedTokens.Any(rt => rt.Token == token);
+        bool isRevoked = await dbManager.RevokedTokens.AnyAsync(rt => rt.Token == token);
 
         if (isRevoked)
             throw new UnauthorizedAccessException("This token has been revoked.");
+
         return token;
     }
 }

@@ -4,6 +4,6 @@ namespace foodDelivery.Application.Interface;
 
 public interface IUserService
 {
-    public UserLoginResponse Login(UserLoginRequest request);
-    public void Logout();
+    public Task<UserLoginResponse> LoginAsync(UserLoginRequest request);
+    public Task LogoutAsync();
 }
