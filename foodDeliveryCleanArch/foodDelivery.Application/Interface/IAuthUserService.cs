@@ -5,9 +5,9 @@ namespace foodDelivery.Application.Interface;
 
 public interface IAuthUserService
 {
-    public AutocompleteResponseDto AutocompleteRestaurants(string prefix);
-    public AutocompleteResponseDto AutocompleteFoods(Guid restaurantId, string prefix);
-    public MenuDetailsDto GetMenu(Guid menuId);
-    public MenusDto GetMenus(Guid restaurantId);
-    public RestaurantProfileDto GetRestaurantProfile(Guid restaurantId);
+    public Task<AutocompleteResponseDto> AutocompleteRestaurantsAsync(string prefix);
+    public Task<AutocompleteResponseDto> AutocompleteFoodsAsync(Guid restaurantId, string prefix);
+    public Task<MenuDetailsDto> GetMenuAsync(Guid menuId);
+    public Task<MenusDto> GetMenusAsync(Guid restaurantId);
+    public Task<RestaurantProfileDto> GetRestaurantProfileAsync(Guid restaurantId);
 }

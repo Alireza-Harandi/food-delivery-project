@@ -8,21 +8,22 @@ namespace foodDelivery.Infrustructure.Services;
 
 public class AuthUserService(DbManager dbManager, IAuthService authService) : IAuthUserService
 {
-    private Token CheckAccess()
+    private async Task CheckAccessAsync()
     {
-        Token token = authService.CheckToken();
-        if (!dbManager.Users.Any(u => u.Id == token.UserId))
+        Token token = await authService.CheckTokenAsync();
+        bool exists = await dbManager.Users.AnyAsync(u => u.Id == token.UserId);
+        if (!exists)
             throw new UnauthorizedAccessException("user not found");
-        return token;
     }
 
-    public AutocompleteResponseDto AutocompleteRestaurants(string prefix)
+    public async Task<AutocompleteResponseDto> AutocompleteRestaurantsAsync(string prefix)
     {
-        CheckAccess();
+        await CheckAccessAsync();
+
         if (string.IsNullOrWhiteSpace(prefix))
             throw new ArgumentException("Prefix is required.");
 
-        List<AutocompleteItemDto> restaurants = dbManager.Restaurants
+        List<AutocompleteItemDto> restaurants = await dbManager.Restaurants
             .Where(r => r.Name.StartsWith(prefix))
             .OrderBy(r => r.Rating)
             .Select(r => new AutocompleteItemDto(
@@ -30,35 +31,41 @@ public class AuthUserService(DbManager dbManager, IAuthService authService) : IA
                 r.Name
             ))
             .Take(5)
-            .ToList();
+            .ToListAsync();
+
         return new AutocompleteResponseDto(restaurants);
     }
 
-    public AutocompleteResponseDto AutocompleteFoods(Guid restaurantId, string prefix)
+    public async Task<AutocompleteResponseDto> AutocompleteFoodsAsync(Guid restaurantId, string prefix)
     {
-        CheckAccess();
+        await CheckAccessAsync();
+
         if (string.IsNullOrWhiteSpace(prefix))
             throw new ArgumentException("Prefix is required.");
 
-        List<AutocompleteItemDto> foods = dbManager.Foods
+        List<AutocompleteItemDto> foods = await dbManager.Foods
             .Where(f => f.Menu!.RestaurantId == restaurantId && f.Name.StartsWith(prefix))
             .Select(f => new AutocompleteItemDto(
                 f.Id,
                 f.Name
             ))
             .Take(5)
-            .ToList();
+            .ToListAsync();
+
         return new AutocompleteResponseDto(foods);
     }
 
-    public MenuDetailsDto GetMenu(Guid menuId)
+    public async Task<MenuDetailsDto> GetMenuAsync(Guid menuId)
     {
-        CheckAccess();
-        Menu? menu = dbManager.Menus
+        await CheckAccessAsync();
+
+        Menu? menu = await dbManager.Menus
             .Include(m => m.Foods)
-            .FirstOrDefault(m => m.Id == menuId);
+            .FirstOrDefaultAsync(m => m.Id == menuId);
+
         if (menu == null)
             throw new KeyNotFoundException("Menu not found.");
+
         return new MenuDetailsDto(
             menu.Id,
             menu.Name,
@@ -67,10 +74,11 @@ public class AuthUserService(DbManager dbManager, IAuthService authService) : IA
         );
     }
 
-    public MenusDto GetMenus(Guid restaurantId)
+    public async Task<MenusDto> GetMenusAsync(Guid restaurantId)
     {
-        CheckAccess();
-        List<MenuDetailsDto> menus = dbManager.Menus
+        await CheckAccessAsync();
+
+        List<MenuDetailsDto> menus = await dbManager.Menus
             .Include(m => m.Foods)
             .Where(m => m.RestaurantId == restaurantId)
             .Select(m => new MenuDetailsDto(
@@ -84,17 +92,20 @@ public class AuthUserService(DbManager dbManager, IAuthService authService) : IA
                     f.Price,
                     f.Description
                 )).ToList()
-            )).ToList();
+            )).ToListAsync();
+
         return new MenusDto(menus);
     }
 
-    public RestaurantProfileDto GetRestaurantProfile(Guid restaurantId)
+    public async Task<RestaurantProfileDto> GetRestaurantProfileAsync(Guid restaurantId)
     {
-        CheckAccess();
-        Restaurant? restaurant = dbManager.Restaurants
+        await CheckAccessAsync();
+
+        Restaurant? restaurant = await dbManager.Restaurants
             .Include(r => r.Location)
             .Include(r => r.WorkingHours)
-            .FirstOrDefault(r => r.Id == restaurantId);
+            .FirstOrDefaultAsync(r => r.Id == restaurantId);
+
         if (restaurant == null)
             throw new KeyNotFoundException("Restaurant not found.");
 
