@@ -13,40 +13,14 @@ public class UserController(IUserService userService) : ControllerBase
     {
         if (!ModelState.IsValid) 
             return BadRequest(ModelState);
-        try
-        {
-            var response = await userService.LoginAsync(request);
-            return Ok(response);
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(new { error = e.Message });
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized(new { error = e.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        var response = await userService.LoginAsync(request);
+        return Ok(response);
     }
 
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        try
-        {
-            await userService.LogoutAsync();
-            return NoContent();
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized(new { error = e.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        await userService.LogoutAsync();
+        return NoContent();
     }
 }
