@@ -13,110 +13,39 @@ public class AuthUserController(IAuthUserService authUserService) : ControllerBa
     [Authorize]
     public async Task<IActionResult> AutocompleteRestaurants(string prefix)
     {
-        try
-        {
-            var response = await authUserService.AutocompleteRestaurantsAsync(prefix);
-            return Ok(response);
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(new { error = e.Message });
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized(new { error = e.Message });
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
-        }
+        var response = await authUserService.AutocompleteRestaurantsAsync(prefix);
+        return Ok(response);
     }
 
     [HttpGet("menu-{menuId}")]
     [Authorize]
     public async Task<IActionResult> GetMenu(Guid menuId)
     {
-        try
-        {
-            var response = await authUserService.GetMenuAsync(menuId);
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { message = ex.Message });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        var response = await authUserService.GetMenuAsync(menuId);
+        return Ok(response);
     }
 
     [HttpGet("menus-{restaurantId}")]
     [Authorize]
     public async Task<IActionResult> GetMenus(Guid restaurantId)
     {
-        try
-        {
-            var response = await authUserService.GetMenusAsync(restaurantId);
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        var response = await authUserService.GetMenusAsync(restaurantId);
+        return Ok(response);
     }
 
     [HttpGet("autocomplete/foods")]
     [Authorize]
     public async Task<IActionResult> AutocompleteFoods(Guid restaurantId, string prefix)
     {
-        try
-        {
-            var response = await authUserService.AutocompleteFoodsAsync(restaurantId, prefix);
-            return Ok(response);
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(new { error = e.Message });
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized(new { error = e.Message });
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
-        }
+        var response = await authUserService.AutocompleteFoodsAsync(restaurantId, prefix);
+        return Ok(response);
     }
 
     [HttpGet("profile/restaurant-{restaurantId}")]
     [Authorize]
     public async Task<IActionResult> GetRestaurantProfile(Guid restaurantId)
     {
-        try
-        {
-            RestaurantProfileDto response = await authUserService.GetRestaurantProfileAsync(restaurantId);
-            return Ok(response);
-        }
-        catch (KeyNotFoundException e)
-        {
-            return NotFound(new { error = e.Message });
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized(new { error = e.Message });
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
-        }
+        var response = await authUserService.GetRestaurantProfileAsync(restaurantId);
+        return Ok(response);
     }
 }
