@@ -15,23 +15,8 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
     {
         if (!ModelState.IsValid) 
             return BadRequest(ModelState);
-        try
-        {
-            AddMenuResponse response = await restaurantService.AddMenuAsync(request);
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { message = ex.Message });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        var response = await restaurantService.AddMenuAsync(request);
+        return Ok(response);
     }
 
     [HttpPost("add/food")]
@@ -40,73 +25,24 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
     {
         if (!ModelState.IsValid) 
             return BadRequest(ModelState);
-        try
-        {
-            AddFoodResponse response = await restaurantService.AddFoodAsync(request);
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { message = ex.Message });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        var response = await restaurantService.AddFoodAsync(request);
+        return Ok(response);
     }
 
     [HttpDelete("remove/menu{menuId}-{restaurantId}")]
     [Authorize]
     public async Task<IActionResult> DeleteMenu(Guid menuId, Guid restaurantId)
     {
-        try
-        {
-            await restaurantService.DeleteMenuAsync(menuId, restaurantId);
-            return NoContent();
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { message = ex.Message });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        await restaurantService.DeleteMenuAsync(menuId, restaurantId);
+        return NoContent();
     }
 
     [HttpDelete("remove/food{foodId}-{restaurantId}")]
     [Authorize]
     public async Task<IActionResult> DeleteFood(Guid foodId, Guid restaurantId)
     {
-        try
-        {
-            await restaurantService.DeleteFoodAsync(foodId, restaurantId);
-            return NoContent();
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { message = ex.Message });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        await restaurantService.DeleteFoodAsync(foodId, restaurantId);
+        return NoContent();
     }
 
     [HttpPatch("set/stock-{foodId}-{restaurantId}")]
@@ -115,23 +51,8 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
     {
         if (!ModelState.IsValid) 
             return BadRequest(ModelState);
-        try
-        {
-            await restaurantService.SetFoodStockAsync(restaurantId, foodId, request);
-            return NoContent();
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { message = ex.Message });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        await restaurantService.SetFoodStockAsync(restaurantId, foodId, request);
+        return NoContent();
     }
 
     [HttpPut("set/location")]
@@ -140,23 +61,8 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
     {
         if (!ModelState.IsValid) 
             return BadRequest(ModelState);
-        try
-        {
-            var response = await restaurantService.SetLocationAsync(request);
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(ex.Message);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        var response = await restaurantService.SetLocationAsync(request);
+        return Ok(response);
     }
 
     [HttpPut("set/working-hours")]
@@ -165,41 +71,15 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
     {
         if (!ModelState.IsValid) 
             return BadRequest(ModelState);
-        try
-        {
-            SetWhResponse response = await restaurantService.SetWhAsync(request);
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { message = ex.Message });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        var response = await restaurantService.SetWhAsync(request);
+        return Ok(response);
     }
 
     [HttpGet("profile/restaurant/{restaurantId}")]
     [Authorize]
     public async Task<IActionResult> GetFinalizedOrders(Guid restaurantId)
     {
-        try
-        {
-            RestaurantOrderDto response = await restaurantService.GetFinalizedOrdersAsync(restaurantId);
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        var response = await restaurantService.GetFinalizedOrdersAsync(restaurantId);
+        return Ok(response);
     }
 }
