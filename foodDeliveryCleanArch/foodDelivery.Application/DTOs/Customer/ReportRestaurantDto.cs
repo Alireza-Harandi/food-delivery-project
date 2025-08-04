@@ -1,7 +1,7 @@
-﻿namespace foodDelivery.Application.DTOs.Customer;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class ReportRestaurantDto(Guid restaurantId, string description)
-{
-    public Guid RestaurantId { get; set; } = restaurantId;
-    public string Description { get; set; } = description;
-}
+namespace foodDelivery.Application.DTOs.Customer;
+
+public record ReportRestaurantDto(
+    [Required] Guid RestaurantId,
+    [Required] string Description);

@@ -1,15 +1,13 @@
-﻿namespace foodDelivery.Application.DTOs.Vendor;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class RegisterRestaurantRequest(string name, string phone)
-{
-    public string Name { get; set; } = name;
-    public string Phone { get; set; } = phone;
-}
+namespace foodDelivery.Application.DTOs.Vendor;
 
-public class RegisterRestaurantResponse(Guid restaurantId, Guid vendorId, string name, string phone)
-{
-    public Guid RestaurantId { get; set; } = restaurantId;
-    public Guid VendorId { get; set; } = vendorId;
-    public string Name { get; set; } = name;
-    public string Phone { get; set; } = phone;
-}
+public record RegisterRestaurantRequest(
+    [Required] string Name,
+    [Required] string Phone);
+
+public record RegisterRestaurantResponse(
+    Guid RestaurantId,
+    Guid VendorId,
+    string Name,
+    string Phone);

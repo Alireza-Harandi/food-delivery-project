@@ -1,12 +1,9 @@
-﻿namespace foodDelivery.Application.DTOs.User;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class UserLoginRequest(string username, string password)
-{
-    public string Username { get; set; } = username;
-    public string Password { get; set; } = password;
-}
+namespace foodDelivery.Application.DTOs.User;
 
-public class UserLoginResponse(string token)
-{
-    public string Token { get; set; } = token;
-}
+public record UserLoginRequest(
+    [Required] string Username,
+    [Required] string Password);
+
+public record UserLoginResponse(string Token);

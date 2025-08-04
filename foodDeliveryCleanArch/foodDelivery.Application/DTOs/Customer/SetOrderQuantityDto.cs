@@ -1,8 +1,8 @@
-﻿namespace foodDelivery.Application.DTOs.Customer;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class SetOrderQuantityDto(Guid orderId, Guid orderItemId, int quantity)
-{
-    public Guid OrderId { get; set; } = orderId;
-    public Guid OrderItemId { get; set; } = orderItemId;
-    public int Quantity { get; set; } = quantity;
-}
+namespace foodDelivery.Application.DTOs.Customer;
+
+public record SetOrderQuantityDto(
+    [Required] Guid OrderId,
+    [Required] Guid OrderItemId,
+    [Required] int Quantity);

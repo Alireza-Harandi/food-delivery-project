@@ -1,14 +1,11 @@
-﻿namespace foodDelivery.Application.DTOs.Customer;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class CustomerSignupRequest(string username, string password, string name, string phoneNumber)
-{
-    public string Username { get; set; } = username;
-    public string Password { get; set; } = password;
-    public string Name { get; set; } = name;
-    public string PhoneNumber { get; set; } = phoneNumber;
-}
+namespace foodDelivery.Application.DTOs.Customer;
 
-public class CustomerSignupResponse(string token)
-{
-    public string Token { get; set; } = token;
-}
+public record CustomerSignupRequest(
+    [Required] string Username,
+    [Required] string Password,
+    [Required] string Name,
+    [Required] string PhoneNumber);
+
+public record CustomerSignupResponse(string Token);

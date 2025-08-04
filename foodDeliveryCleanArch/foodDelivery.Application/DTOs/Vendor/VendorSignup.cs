@@ -1,14 +1,11 @@
-﻿namespace foodDelivery.Application.DTOs.Vendor;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class VendorSignupRequest(string username, string password, string name, string phone)
-{
-    public string Username { get; set; } = username;
-    public string Password { get; set; } = password;
-    public string Name { get; set; } = name;
-    public string Phone { get; set; } = phone;
-}
+namespace foodDelivery.Application.DTOs.Vendor;
 
-public class VendorSignupResponse(string token)
-{
-    public string Token { get; set; } = token;
-}
+public record VendorSignupRequest(
+    [Required] string Username,
+    [Required] string Password,
+    [Required] string Name,
+    [Required] string Phone);
+
+public record VendorSignupResponse(string Token);
