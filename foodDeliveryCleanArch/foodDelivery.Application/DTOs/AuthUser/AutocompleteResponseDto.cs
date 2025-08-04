@@ -1,12 +1,5 @@
 ﻿namespace foodDelivery.Application.DTOs.AuthUser;
 
-public class AutocompleteResponseDto(List<AutocompleteItemDto> items)
-{
-    public List<AutocompleteItemDto> Item { get; set; } = items;
-}
+public record AutocompleteResponseDto(List<AutocompleteItemDto> Items);
 
-public class AutocompleteItemDto(Guid id, string name)
-{
-    public Guid Id { get; set; } = id;
-    public string Name { get; set; } = name;
-}
+public record AutocompleteItemDto(Guid Id, string Name);

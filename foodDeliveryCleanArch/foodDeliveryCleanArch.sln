@@ -4,11 +4,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "foodDelivery.Domain", "food
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "foodDelivery.Application", "foodDelivery.Application\foodDelivery.Application.csproj", "{CB747E50-DAA2-4F60-A625-8B6A298196FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "foodDelivery.Infrustructure", "foodDelivery.Infrustructure\foodDelivery.Infrustructure.csproj", "{8AB50839-26C2-484D-86F9-7D7E6A689318}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "foodDelivery.Infrastructure", "foodDelivery.Infrastructure\foodDelivery.Infrastructure.csproj", "{8AB50839-26C2-484D-86F9-7D7E6A689318}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "foodDelivery.Tests", "foodDelivery.Tests\foodDelivery.Tests.csproj", "{DC49D20C-5BD9-4E84-BDA7-9AB6FBDD423C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "foodDelivery.Pres", "foodDelivery.Pres\foodDelivery.Pres.csproj", "{B3EC67A6-1E21-44FC-A308-DFF485573D42}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "foodDelivery.Presentation", "foodDelivery.Presentation\foodDelivery.Presentation.csproj", "{B3EC67A6-1E21-44FC-A308-DFF485573D42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

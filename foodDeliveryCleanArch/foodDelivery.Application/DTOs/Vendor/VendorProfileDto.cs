@@ -1,15 +1,9 @@
 ﻿namespace foodDelivery.Application.DTOs.Vendor;
 
-public class VendorProfileDto(Guid vendorId, string name, string phone, List<RestaurantDetail> restaurants)
-{
-    public Guid VendorId { get; set; } = vendorId;
-    public string Name { get; set; } = name;
-    public string Phone { get; set; } = phone;
-    public List<RestaurantDetail> Restaurants { get; set; } = restaurants;
-}
+public record VendorProfileDto(
+    Guid VendorId,
+    string Name,
+    string Phone,
+    List<RestaurantDetail> Restaurants);
 
-public class RestaurantDetail(Guid restaurantId, string name)
-{
-    public Guid RestaurantId { get; set; } = restaurantId;
-    public string Name { get; set; } = name;
-}
+public record RestaurantDetail(Guid RestaurantId, string Name);

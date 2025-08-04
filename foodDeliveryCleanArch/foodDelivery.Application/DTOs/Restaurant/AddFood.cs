@@ -1,29 +1,20 @@
-﻿namespace foodDelivery.Application.DTOs.Restaurant;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class AddFoodRequest(Guid restaurantId, Guid menuId, string name, double price, string description, int stock)
-{
-    public Guid RestaurantId { get; set; } = restaurantId;
-    public Guid MenuId { get; set; } = menuId;
-    public string Name { get; set; } = name;
-    public double Price { get; set; } = price;
-    public int Stock { get; set; } = stock;
-    public string Description { get; set; } = description;
-}
+namespace foodDelivery.Application.DTOs.Restaurant;
 
-public class AddFoodResponse(
-    Guid restaurantId,
-    Guid menuId,
-    Guid foodId,
-    string name,
-    double price,
-    string description,
-    int stock)
-{
-    public Guid RestaurantId { get; set; } = restaurantId;
-    public Guid MenuId { get; set; } = menuId;
-    public Guid FoodId { get; set; } = foodId;
-    public string Name { get; set; } = name;
-    public double Price { get; set; } = price;
-    public int Stock { get; set; } = stock;
-    public string Description { get; set; } = description;
-}
+public record AddFoodRequest(
+    [Required] Guid RestaurantId,
+    [Required] Guid MenuId,
+    [Required] string Name,
+    [Required] double Price,
+    [Required] string Description,
+    [Required] int Stock);
+
+public record AddFoodResponse(
+    Guid RestaurantId,
+    Guid MenuId,
+    Guid FoodId,
+    string Name,
+    double Price,
+    string Description,
+    int Stock);

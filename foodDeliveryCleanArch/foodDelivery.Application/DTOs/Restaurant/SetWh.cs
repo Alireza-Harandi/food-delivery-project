@@ -1,39 +1,11 @@
-﻿namespace foodDelivery.Application.DTOs.Restaurant;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class SetWh
-{
-    public DayOfWeek Day { get; set; }
-    public string Start { get; set; }
-    public string End { get; set; }
+namespace foodDelivery.Application.DTOs.Restaurant;
 
-    public SetWh(DayOfWeek day, string start, string end)
-    {
-        Day = day;
-        Start = start;
-        End = end;
-    }
-}
+public record SetWh(DayOfWeek Day, string Start, string End);
 
-public class SetWhRequest
-{
-    public Guid RestaurantId { get; set; }
-    public List<SetWh> WhList { get; set; }
+public record SetWhRequest(
+    [Required] Guid RestaurantId,
+    [Required] List<SetWh> WhList);
 
-    public SetWhRequest(Guid restaurantId)
-    {
-        RestaurantId = restaurantId;
-        WhList = new();
-    }
-}
-
-public class SetWhResponse
-{
-    public Guid RestaurantId { get; set; }
-    public List<SetWh> WorkingHours { get; set; }
-
-    public SetWhResponse(Guid restaurantId, List<SetWh> workingHours)
-    {
-        RestaurantId = restaurantId;
-        WorkingHours = workingHours;
-    }
-}
+public record SetWhResponse(Guid RestaurantId, List<SetWh> WorkingHours);

@@ -1,14 +1,10 @@
-﻿namespace foodDelivery.Application.DTOs.Customer;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class AddToOrderRequest(Guid restaurantId, Guid foodId, int quantity)
-{
-    public Guid RestaurantId { get; set; } = restaurantId;
-    public Guid FoodId { get; set; } = foodId;
-    public int Quantity { get; set; } = quantity;
-}
+namespace foodDelivery.Application.DTOs.Customer;
 
-public class AddToOrderResponse(Guid orderId, Guid orderItemId)
-{
-    public Guid OrderId { get; set; } = orderId;
-    public Guid OrderItemId { get; set; } = orderItemId;
-}
+public record AddToOrderRequest(
+    [Required] Guid RestaurantId,
+    [Required] Guid FoodId,
+    [Required] int Quantity);
+
+public record AddToOrderResponse(Guid OrderId, Guid OrderItemId);

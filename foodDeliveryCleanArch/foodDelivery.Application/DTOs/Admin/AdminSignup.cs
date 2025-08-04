@@ -1,13 +1,9 @@
-﻿namespace foodDelivery.Application.DTOs.Admin;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class AdminSignupRequest(string username, string password)
-{
-    public string Username { get; set; } = username;
-    public string Password { get; set; } = password;
-}
+namespace foodDelivery.Application.DTOs.Admin;
 
-public class AdminSignupResponse(string username, string password)
-{
-    public string Username { get; set; } = username;
-    public string Password { get; set; } = password;
-}
+public record AdminSignupRequest(
+    [Required] string Username,
+    [Required] string Password);
+
+public record AdminSignupResponse(string Username, string Password);

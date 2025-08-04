@@ -1,14 +1,11 @@
-﻿namespace foodDelivery.Application.DTOs.Customer;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class FinalizeOrderRequest(Guid orderId, double latitude, double longitude, string address)
-{
-    public Guid OrderId { get; set; } = orderId;
-    public double Latitude { get; set; } = latitude;
-    public double Longitude { get; set; } = longitude;
-    public string Address { get; set; } = address;
-}
+namespace foodDelivery.Application.DTOs.Customer;
 
-public class FinalizeOrderResponse(Guid orderId)
-{
-    public Guid OrderId { get; set; } = orderId;
-}
+public record FinalizeOrderRequest(
+    [Required] Guid OrderId,
+    [Required] double Latitude,
+    [Required] double Longitude,
+    [Required] string Address);
+
+public record FinalizeOrderResponse(Guid OrderId);
