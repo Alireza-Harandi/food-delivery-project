@@ -1,5 +1,6 @@
 ﻿using foodDelivery.Application.DTOs.Admin;
 using foodDelivery.Application.Interface;
+using foodDelivery.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,7 @@ namespace foodDelivery.Presentation.Controller;
 [Route("admin")]
 public class AdminController(IAdminService adminService) : ControllerBase
 {
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Admin))]
     [HttpPost("signup")]
     public async Task<IActionResult> Signup([FromBody] AdminSignupRequest request)
     {
@@ -19,7 +20,7 @@ public class AdminController(IAdminService adminService) : ControllerBase
         return Ok(response);
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Admin))]
     [HttpGet("reports")]
     public async Task<IActionResult> GetReports()
     {
