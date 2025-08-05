@@ -10,7 +10,7 @@ public class RestaurantService(DbManager dbManager, IAuthService authService) : 
 {
     private async Task CheckAccessAsync(Guid restaurantId)
     {
-        Token token = await authService.CheckTokenAsync(Role.Vendor);
+        Token token = await authService.CheckTokenAsync();
         bool hasAccess = await dbManager.Restaurants
             .AnyAsync(r => r.Id == restaurantId && r.Vendor!.UserId == token.UserId);
         if (!hasAccess)
