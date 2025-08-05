@@ -10,7 +10,7 @@ public class CustomerService(DbManager dbManager, IAuthService authService) : IC
 {
     private async Task<Token> CheckAccessAsync()
     {
-        Token token = await authService.CheckTokenAsync(Role.Customer);
+        Token token = await authService.CheckTokenAsync();
         if (!await dbManager.Customers.AnyAsync(c => c.UserId == token.UserId))
             throw new UnauthorizedAccessException("customer not found");
         return token;
