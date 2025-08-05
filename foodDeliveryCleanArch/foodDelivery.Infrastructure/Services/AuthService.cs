@@ -59,18 +59,6 @@ public class AuthService(IConfiguration configuration, IHttpContextAccessor http
         return new Token(Guid.Parse(userIdClaim.Value), roleEnum);
     }
 
-    public async Task<Token> CheckTokenAsync(Role role)
-    {
-        Token? token = GetClaims();
-        if (token == null)
-            throw new UnauthorizedAccessException("Invalid token");
-        if (token.Role != role)
-            throw new UnauthorizedAccessException("Invalid role");
-
-        await IsRevokedAsync();
-        return token;
-    }
-
     public async Task<Token> CheckTokenAsync()
     {
         Token? token = GetClaims();
