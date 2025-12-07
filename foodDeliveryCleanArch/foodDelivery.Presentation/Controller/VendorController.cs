@@ -1,5 +1,6 @@
 ﻿using foodDelivery.Application.DTOs.Vendor;
 using foodDelivery.Application.Interface;
+using foodDelivery.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +20,7 @@ public class VendorController(IVendorService vendorService) : ControllerBase
     }
 
     [HttpPost("register/restaurant")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Vendor))]
     public async Task<IActionResult> RegisterRestaurant([FromBody] RegisterRestaurantRequest request)
     {
         if (!ModelState.IsValid) 
@@ -29,7 +30,7 @@ public class VendorController(IVendorService vendorService) : ControllerBase
     }
 
     [HttpGet("profile")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Vendor))]
     public async Task<IActionResult> GetProfile()
     {
         var response = await vendorService.GetProfileAsync();

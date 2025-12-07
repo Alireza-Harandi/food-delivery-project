@@ -10,7 +10,7 @@ public class VendorService(DbManager dbManager, IAuthService authService) : IVen
 {
     private async Task<Token> CheckAccessAsync()
     {
-        Token token = await authService.CheckTokenAsync(Role.Vendor);
+        Token token = await authService.CheckTokenAsync();
         bool exists = await dbManager.Vendors.AnyAsync(v => v.UserId == token.UserId);
         if (!exists)
             throw new UnauthorizedAccessException("Vendor not found");

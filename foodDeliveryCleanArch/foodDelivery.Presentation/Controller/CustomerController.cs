@@ -1,5 +1,6 @@
 ﻿using foodDelivery.Application.DTOs.Customer;
 using foodDelivery.Application.Interface;
+using foodDelivery.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ArgumentException = System.ArgumentException;
@@ -20,7 +21,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
     }
 
     [HttpPost("add/to-order")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Customer))]
     public async Task<IActionResult> AddToOrder([FromBody] AddToOrderRequest request)
     {
         if (!ModelState.IsValid) 
@@ -30,7 +31,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
     }
 
     [HttpPatch("set/order-quantity")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Customer))]
     public async Task<IActionResult> SetOrderQuantity([FromBody] SetOrderQuantityDto request)
     {
         if (!ModelState.IsValid) 
@@ -40,7 +41,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
     }
 
     [HttpGet("orders-{orderId}")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Customer))]
     public async Task<IActionResult> GetOrders(Guid orderId)
     {
         var response = await customerService.GetOrdersAsync(orderId);
@@ -49,7 +50,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
 
 
     [HttpGet("finalize/order")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Customer))]
     public async Task<IActionResult> FinalizeOrder([FromBody] FinalizeOrderRequest request)
     {
         if (!ModelState.IsValid) 
@@ -59,7 +60,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
     }
 
     [HttpPost("report")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Customer))]
     public async Task<IActionResult> ReportRestaurant([FromBody] ReportRestaurantDto request)
     {
         if (!ModelState.IsValid) 
@@ -69,7 +70,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
     }
 
     [HttpDelete("delete/order-{orderId}")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Customer))]
     public async Task<IActionResult> DeleteOrder(Guid orderId)
     {
         await customerService.DeleteOrderAsync(orderId);
@@ -77,7 +78,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
     }
 
     [HttpPost("submit/rating")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Customer))]
     public async Task<IActionResult> SubmitRating([FromBody] SubmitRatingDto request)
     {
         if (!ModelState.IsValid) 
@@ -87,7 +88,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
     }
 
     [HttpGet("profile")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Customer))]
     public async Task<IActionResult> GetProfile()
     {
         var response = await customerService.GetProfileAsync();

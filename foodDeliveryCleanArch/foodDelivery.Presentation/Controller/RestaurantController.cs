@@ -1,5 +1,6 @@
 ﻿using foodDelivery.Application.DTOs.Restaurant;
 using foodDelivery.Application.Interface;
+using foodDelivery.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +11,7 @@ namespace foodDelivery.Presentation.Controller;
 public class RestaurantController(IRestaurantService restaurantService) : ControllerBase
 {
     [HttpPost("add/menu")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Vendor))]
     public async Task<IActionResult> AddMenu([FromBody] AddMenuRequest request)
     {
         if (!ModelState.IsValid) 
@@ -20,7 +21,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
     }
 
     [HttpPost("add/food")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Vendor))]
     public async Task<IActionResult> AddFood([FromBody] AddFoodRequest request)
     {
         if (!ModelState.IsValid) 
@@ -30,7 +31,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
     }
 
     [HttpDelete("remove/menu{menuId}-{restaurantId}")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Vendor))]
     public async Task<IActionResult> DeleteMenu(Guid menuId, Guid restaurantId)
     {
         await restaurantService.DeleteMenuAsync(menuId, restaurantId);
@@ -38,7 +39,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
     }
 
     [HttpDelete("remove/food{foodId}-{restaurantId}")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Vendor))]
     public async Task<IActionResult> DeleteFood(Guid foodId, Guid restaurantId)
     {
         await restaurantService.DeleteFoodAsync(foodId, restaurantId);
@@ -46,7 +47,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
     }
 
     [HttpPatch("set/stock-{foodId}-{restaurantId}")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Vendor))]
     public async Task<IActionResult> SetFoodStock(Guid restaurantId, Guid foodId, [FromBody] UpdateStockDto request)
     {
         if (!ModelState.IsValid) 
@@ -56,7 +57,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
     }
 
     [HttpPut("set/location")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Vendor))]
     public async Task<IActionResult> SetLocation([FromBody] SetLocationRequest request)
     {
         if (!ModelState.IsValid) 
@@ -66,7 +67,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
     }
 
     [HttpPut("set/working-hours")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Vendor))]
     public async Task<IActionResult> SetWorkingHours([FromBody] SetWhRequest request)
     {
         if (!ModelState.IsValid) 
@@ -76,7 +77,7 @@ public class RestaurantController(IRestaurantService restaurantService) : Contro
     }
 
     [HttpGet("profile/restaurant/{restaurantId}")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Vendor))]
     public async Task<IActionResult> GetFinalizedOrders(Guid restaurantId)
     {
         var response = await restaurantService.GetFinalizedOrdersAsync(restaurantId);
