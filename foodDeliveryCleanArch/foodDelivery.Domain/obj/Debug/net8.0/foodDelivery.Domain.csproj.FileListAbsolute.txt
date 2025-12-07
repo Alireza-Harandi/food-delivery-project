@@ -1,0 +1,15 @@
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\bin\Debug\net8.0\foodDelivery.Domain.deps.json
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\bin\Debug\net8.0\foodDelivery.Domain.runtimeconfig.json
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\bin\Debug\net8.0\foodDelivery.Domain.dll
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\bin\Debug\net8.0\foodDelivery.Domain.pdb
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\obj\Debug\net8.0\foodDelivery.Domain.csproj.AssemblyReference.cache
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\obj\Debug\net8.0\foodDelivery.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\obj\Debug\net8.0\foodDelivery.Domain.AssemblyInfoInputs.cache
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\obj\Debug\net8.0\foodDelivery.Domain.AssemblyInfo.cs
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\obj\Debug\net8.0\foodDelivery.Domain.csproj.CoreCompileInputs.cache
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\obj\Debug\net8.0\foodDelivery.Domain.sourcelink.json
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\obj\Debug\net8.0\foodDelivery.Domain.dll
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\obj\Debug\net8.0\refint\foodDelivery.Domain.dll
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\obj\Debug\net8.0\foodDelivery.Domain.pdb
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\obj\Debug\net8.0\foodDelivery.Domain.genruntimeconfig.cache
+C:\C#-.Net\food-delivery-project\foodDeliveryCleanArch\foodDelivery.Domain\obj\Debug\net8.0\ref\foodDelivery.Domain.dll
