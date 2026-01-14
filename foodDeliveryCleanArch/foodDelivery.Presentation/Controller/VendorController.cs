@@ -1,5 +1,6 @@
 ﻿using foodDelivery.Application.DTOs.Vendor;
 using foodDelivery.Application.Interface;
+using foodDelivery.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,66 +15,25 @@ public class VendorController(IVendorService vendorService) : ControllerBase
     {
         if (!ModelState.IsValid) 
             return BadRequest(ModelState);
-        try
-        {
-            var response = await vendorService.SignupAsync(request);
-            return Ok(response);
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(new { error = e.Message });
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized(new { error = e.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        var response = await vendorService.SignupAsync(request);
+        return Ok(response);
     }
 
     [HttpPost("register/restaurant")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Vendor))]
     public async Task<IActionResult> RegisterRestaurant([FromBody] RegisterRestaurantRequest request)
     {
         if (!ModelState.IsValid) 
             return BadRequest(ModelState);
-        try
-        {
-            var response = await vendorService.RegisterRestaurantAsync(request);
-            return Ok(response);
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(new { error = e.Message });
-        }
-        catch (UnauthorizedAccessException e)
-        {
-            return Unauthorized(new { error = e.Message });
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {e.Message}");
-        }
+        var response = await vendorService.RegisterRestaurantAsync(request);
+        return Ok(response);
     }
 
     [HttpGet("profile")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Vendor))]
     public async Task<IActionResult> GetProfile()
     {
-        try
-        {
-            var response = await vendorService.GetProfileAsync();
-            return Ok(response);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An unexpected error occurred\\the following error: {ex.Message}");
-        }
+        var response = await vendorService.GetProfileAsync();
+        return Ok(response);
     }
 }

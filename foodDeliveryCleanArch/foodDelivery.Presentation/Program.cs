@@ -2,6 +2,7 @@
 using foodDelivery.Application.Interface;
 using foodDelivery.Infrastructure;
 using foodDelivery.Infrastructure.Services;
+using foodDelivery.Presentation.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -85,6 +86,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionHandling>();
 app.UseAuthentication();
 app.UseAuthorization();
 

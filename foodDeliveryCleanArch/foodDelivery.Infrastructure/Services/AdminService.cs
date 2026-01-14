@@ -9,7 +9,7 @@ public class AdminService(DbManager dbManager, IAuthService authService) : IAdmi
 {
     private async Task CheckAccessAsync()
     {
-        Token token = await authService.CheckTokenAsync(Role.Admin);
+        Token token = await authService.CheckTokenAsync();
         bool exists = await dbManager.Users.AnyAsync(u => u.Id == token.UserId && u.Role == Role.Admin);
         if (!exists)
             throw new UnauthorizedAccessException("admin not found");
